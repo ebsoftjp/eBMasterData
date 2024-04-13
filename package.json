@@ -1,0 +1,13 @@
+{
+  "name": "jp.ebsoft.eb-master-data",
+  "version": "0.1",
+  "displayName": "eB Master Data",
+  "description": "This is an asset for easily handling master data.",
+  "unity": "2023.3",
+  "documentationUrl": "https://ebsoft.jp/eb-master-data/",
+  "author": {
+    "name": "eB Soft",
+    "email": "sugihara@ebsoft.jp",
+    "url": "https://ebsoft.jp"
+  }
+}
