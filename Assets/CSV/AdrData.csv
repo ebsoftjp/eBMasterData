@@ -1,4 +1,5 @@
 Id,Value,OrderText
+string,int,string
 Id of data,Value of data,Display order text
 One,10,1st
 Two,20,2nd

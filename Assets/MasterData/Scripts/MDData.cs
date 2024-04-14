@@ -8,10 +8,12 @@ namespace MasterData
         public static Data Tables;
 
         public DBClassAdrData[] AdrData;
+        public DBClassStrData[] StrData;
 
         public DBClassBase[] GetItemsFromTableName(string tableName) => tableName switch
         {
             "AdrData" => AdrData,
+            "StrData" => StrData,
             _ => null,
         };
 
@@ -19,6 +21,7 @@ namespace MasterData
         {
             foreach (var item in res) Debug.Log(item);
             AdrData = ConvertList<DBClassAdrData>("AdrData", res);
+            StrData = ConvertList<DBClassStrData>("StrData", res);
         }
 
         private T[] ConvertList<T>(string key, string[] res)

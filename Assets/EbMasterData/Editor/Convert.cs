@@ -45,6 +45,7 @@ namespace EbMasterData
         class KeysData3
         {
             public string key;
+            public string type;
             public string comment;
         }
 
@@ -62,17 +63,18 @@ namespace EbMasterData
             {
                 new()
                 {
-                    Path = "CSV/StrData.csv",
-                    DataType = SettingsDataSource.DsDataType.Resources,
+                    Path = "Assets/CSV",
+                    DataType = SettingsDataSource.DsDataType.Addressables,
+                    Format = SettingsDataSource.DsFormat.CSV,
+                },
+                new()
+                {
+                    Path = "Assets/StreamingAssets/CSV",
+                    DataType = SettingsDataSource.DsDataType.StreamingAssets,
                     Format = SettingsDataSource.DsFormat.CSV,
                 },
             };
             return res;
-        }
-
-        private static string ConvertType(string type)
-        {
-            return "string";
         }
 
         private static bool DownloadIndicator(int cur, int max, string text)
@@ -102,27 +104,57 @@ namespace EbMasterData
             await System.Threading.Tasks.Task.CompletedTask;
 
             // add Addressables
-            var files = Directory.GetFiles("Assets/CSV/", "*.csv");
-            var append = new List<KeysData2>();
+            var files = new List<string>();
+
+            foreach (var item in settings.Sources)
+            {
+                switch (item.Format)
+                {
+                    case SettingsDataSource.DsFormat.CSV:
+                        files.AddRange(Directory.GetFiles(item.Path, "*.csv"));
+                        break;
+                    case SettingsDataSource.DsFormat.JSON:
+                        files.AddRange(Directory.GetFiles(item.Path, "*.json"));
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            var data2 = new List<KeysData2>();
             //var configs = new List<ConfigData>();
             foreach (var file in files)
             {
-                var item = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
+                Debug.Log(file);
+                //var item = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
                 //Debug.Log(item.name);
-                var lines = item.text.Split(retCode).Select(v => v.Split(commaCode));
-                append.Add(new()
+                //Debug.Log(item.text);
+                //var lines = item.text.Split(retCode).Select(v => v.Split(commaCode));
+
+                var lines = new List<string[]>();
+                using (var sr = new StreamReader(file))
                 {
-                    name = item.name,
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        lines.Add(line.Split(commaCode));
+                    }
+                }
+
+                data2.Add(new()
+                {
+                    name = Regex.Match(file, @"([^/]+)\.[a-zA-Z0-9]+$").Groups[1].Value,
                     keys = Enumerable.Repeat(0, lines?.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
                     {
                         key = lines?.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
-                        comment = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
+                        type = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
+                        comment = lines?.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
                     }).ToArray(),
                 });
             }
             EditorUtility.ClearProgressBar();
 
-            var data2 = data.list.Concat(append).ToArray();
+            //var data2 = data.list.Concat(append).ToArray();
 
             // create classes
             CreateMasterDataDBClasses(data2, $"{settings.OutputPath}/{settings.DBClassesFileName}.cs");
@@ -312,7 +344,7 @@ namespace EbMasterData
         //    AssetDatabase.Refresh();
         //}
 
-        private static void CreateMasterDataData(KeysData2[] data, string path)
+        private static void CreateMasterDataData(List<KeysData2> data, string path)
         {
             var res = new List<string>
             {
@@ -379,7 +411,7 @@ namespace EbMasterData
             WriteFile(res, path);
         }
 
-        private static void CreateMasterDataDBClasses(KeysData2[] data, string path)
+        private static void CreateMasterDataDBClasses(List<KeysData2> data, string path)
         {
             var res = new List<string>
             {
@@ -442,7 +474,7 @@ namespace EbMasterData
                 $"    {{",
             };
 
-            res.AddRange(data.keys.Select(v => $"        public {ConvertType(v.key)} {v.key}; // {v.comment.Replace("\n", "")}"));
+            res.AddRange(data.keys.Select(v => $"        public {v.type} {v.key}; // {v.comment.Replace("\n", "")}"));
 
             // reference
             var refClasses = data.keys

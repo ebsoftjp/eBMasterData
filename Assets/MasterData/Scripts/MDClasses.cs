@@ -19,7 +19,13 @@ namespace MasterData
     [System.Serializable]
     public class DBClassAdrData : DBClassBase
     {
-        public string Value; // Value of data
+        public int Value; // Value of data
         public string OrderText; // Display order text
+    }
+
+    [System.Serializable]
+    public class DBClassStrData : DBClassBase
+    {
+        public string Name; // Name of data
     }
 }

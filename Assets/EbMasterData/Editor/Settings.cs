@@ -13,12 +13,12 @@ namespace EbMasterData
         /// <summary>
         /// Data file name
         /// </summary>
-        public string DataFileName = "Data";
+        public string DataFileName = "MDData";
 
         /// <summary>
-        /// Data file name
+        /// Classes file name
         /// </summary>
-        public string DBClassesFileName = "DBClasses";
+        public string DBClassesFileName = "MDClasses";
 
         /// <summary>
         /// Data sources
