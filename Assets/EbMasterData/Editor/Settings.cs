@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace EbMasterData
+namespace EbMasterData.Editor
 {
     public class Settings : ScriptableObject
     {

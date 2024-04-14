@@ -6,11 +6,12 @@ using UnityEngine;
 using UnityEditor;
 //using Newtonsoft.Json;
 
-namespace EbMasterData
+namespace EbMasterData.Editor
 {
     public class Convert : EditorWindow
     {
-        private const string settingsPath = "MasterData/Settings";
+        private const string basePath = "Assets/MasterData";
+        private const string settingsPath = "EbMasterData/Settings";
         private const string masterClassName = "Data";
         private const string tablePrefix = "DBClass";
         private const string classBase0 = "Base";
@@ -56,26 +57,7 @@ namespace EbMasterData
             public string key;
         }
 
-        private static Settings GetSettings()
-        {
-            var res = CreateInstance<Settings>();
-            res.Sources = new SettingsDataSource[]
-            {
-                new()
-                {
-                    Path = "Assets/CSV",
-                    DataType = SettingsDataSource.DsDataType.Addressables,
-                    Format = SettingsDataSource.DsFormat.CSV,
-                },
-                new()
-                {
-                    Path = "Assets/StreamingAssets/CSV",
-                    DataType = SettingsDataSource.DsDataType.StreamingAssets,
-                    Format = SettingsDataSource.DsFormat.CSV,
-                },
-            };
-            return res;
-        }
+        private static Settings GetSettings() => Resources.Load<Settings>(settingsPath);
 
         private static bool DownloadIndicator(int cur, int max, string text)
         {
@@ -86,8 +68,16 @@ namespace EbMasterData
             return isCancel;
         }
 
-        [MenuItem("Window/eB Master Data/DB class convert")]
-        private static async void ConvertDBClasses()
+        public static void InitData()
+        {
+            var path = $"{basePath}/Resources/{settingsPath}.asset";
+            CreateDir(path);
+            if (File.Exists(path)) return;
+            var settings = CreateInstance<Settings>();
+            AssetDatabase.CreateAsset(settings, path);
+        }
+
+        public static async void ConvertDBClasses()
         {
             // get data
             var settings = GetSettings();
@@ -567,16 +557,26 @@ namespace EbMasterData
             return res;
         }
 
+        private static void CreateDir(string path)
+        {
+            var dir = Regex.Replace(path, @"[^/]+?$", "");
+            if (Directory.Exists(dir)) return;
+            Directory.CreateDirectory(dir);
+        }
+
+        private static void CreateFile(string path)
+        {
+            if (File.Exists(path)) return;
+
+            CreateDir(path);
+            var fs = File.Create(path);
+            fs.Close();
+            AssetDatabase.ImportAsset(path);
+        }
+
         private static void WriteFile(List<string> res, string path)
         {
-            if (!File.Exists(path))
-            {
-                var dir = Regex.Replace(path, @"[^/]+?$", "");
-                Directory.CreateDirectory(dir);
-                var fs = File.Create(path);
-                fs.Close();
-                AssetDatabase.ImportAsset(path);
-            }
+            CreateFile(path);
 
             var sw = new StreamWriter(path, false);
             sw.WriteLine(string.Join("\n", res));
