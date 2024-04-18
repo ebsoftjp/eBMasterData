@@ -17,8 +17,14 @@ MonoBehaviour:
   DBClassesFileName: MDClasses
   Sources:
   - Path: Assets/CSV
+    AddressablesLabel: CSV
     DataType: 2
     Format: 0
   - Path: Assets/StreamingAssets/CSV
+    AddressablesLabel: 
     DataType: 3
+    Format: 0
+  - Path: https://docs.google.com/spreadsheets/d/e/2PACX-1vRyYLWGxNR0Amv99WYJncKBbzxO6HyXGbpWC1weuWruRL5to-dSduDOXMIQXs5ziVqIZY36HwadX8da/pub?gid=0&single=true&output=csv
+    AddressablesLabel: 
+    DataType: 4
     Format: 0

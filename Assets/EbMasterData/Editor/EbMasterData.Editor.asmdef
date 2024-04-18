@@ -1,7 +1,9 @@
 {
     "name": "EbMasterData.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:cd47d5a1d345e4b57a209dad0caba53e"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

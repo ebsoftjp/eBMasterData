@@ -18,20 +18,29 @@ namespace EbMasterData.Editor
             EditorGUILayout.EndVertical();
 
             EditorGUILayout.LabelField("EbMasterData control panel");
+            var rect = new Rect(40.0f, 60.0f, 240.0f, 20.0f);
 
-            if (GUI.Button(new Rect(40.0f, 60.0f, 120.0f, 20.0f), "Init"))
+            if (GUI.Button(rect, "Init"))
             {
                 Convert.InitData();
             }
 
-            if (GUI.Button(new Rect(40.0f, 100.0f, 120.0f, 20.0f), "Convert"))
+            rect.y += 40;
+            if (GUI.Button(rect, "Open Settings"))
+            {
+                Selection.activeObject = AssetDatabase.LoadAssetAtPath<Settings>(Paths.SettingsFullPath);
+            }
+
+            rect.y += 40;
+            if (GUI.Button(rect, "Convert"))
             {
                 Convert.ConvertDBClasses();
             }
 
-            if (GUI.Button(new Rect(40.0f, 140.0f, 120.0f, 20.0f), "Close"))
+            rect.y += 40;
+            if (GUI.Button(rect, "Close"))
             {
-                this.Close();
+                Close();
             }
         }
     }

@@ -28,4 +28,10 @@ namespace MasterData
     {
         public string Name; // Name of data
     }
+
+    [System.Serializable]
+    public class DBClassSprData : DBClassBase
+    {
+        public int Value; // Value of data
+    }
 }

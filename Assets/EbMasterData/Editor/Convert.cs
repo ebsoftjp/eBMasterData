@@ -5,13 +5,12 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 //using Newtonsoft.Json;
+using EbMasterData;
 
 namespace EbMasterData.Editor
 {
-    public class Convert : EditorWindow
+    public class Convert
     {
-        private const string basePath = "Assets/MasterData";
-        private const string settingsPath = "EbMasterData/Settings";
         private const string masterClassName = "Data";
         private const string tablePrefix = "DBClass";
         private const string classBase0 = "Base";
@@ -19,7 +18,6 @@ namespace EbMasterData.Editor
         //private const string classBase2 = "base2";
         private const string primaryKey = "Id";
         private const string idSuffix = "Id";
-        private const string retCode = "\r\n";
         private const string commaCode = ",";
         private const string subKey = "Rate";
         private const string configKey = "Config";
@@ -32,32 +30,12 @@ namespace EbMasterData.Editor
             "VecData",
         };
 
-        class KeysData1
-        {
-            public KeysData2[] list;
-        }
-
-        class KeysData2
-        {
-            public string name;
-            public KeysData3[] keys;
-        }
-
-        class KeysData3
-        {
-            public string key;
-            public string type;
-            public string comment;
-        }
-
         class ConfigData
         {
             public string type;
             public string group;
             public string key;
         }
-
-        private static Settings GetSettings() => Resources.Load<Settings>(settingsPath);
 
         private static bool DownloadIndicator(int cur, int max, string text)
         {
@@ -70,87 +48,28 @@ namespace EbMasterData.Editor
 
         public static void InitData()
         {
-            var path = $"{basePath}/Resources/{settingsPath}.asset";
+            var path = Paths.SettingsFullPath;
             CreateDir(path);
             if (File.Exists(path)) return;
-            var settings = CreateInstance<Settings>();
+            var settings = ScriptableObject.CreateInstance<Settings>();
             AssetDatabase.CreateAsset(settings, path);
         }
 
         public static async void ConvertDBClasses()
         {
             // get data
-            var settings = GetSettings();
+            var reader = new ReaderForEditor(DownloadIndicator);
 
-            // get data from server
-            var data = new KeysData1()
-            {
-                list = new KeysData2[0],
-            };
-            //var d = new MasterData.Downloader();
-            //var res = await d.Download1(DownloadIndicator);
-            //var res = await d.DownloadDummy1(DownloadIndicator);
-            //var data = JsonConvert.DeserializeObject<KeysData1>(res);
-            await System.Threading.Tasks.Task.CompletedTask;
-
-            // add Addressables
-            var files = new List<string>();
-
-            foreach (var item in settings.Sources)
-            {
-                switch (item.Format)
-                {
-                    case SettingsDataSource.DsFormat.CSV:
-                        files.AddRange(Directory.GetFiles(item.Path, "*.csv"));
-                        break;
-                    case SettingsDataSource.DsFormat.JSON:
-                        files.AddRange(Directory.GetFiles(item.Path, "*.json"));
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            var data2 = new List<KeysData2>();
-            //var configs = new List<ConfigData>();
-            foreach (var file in files)
-            {
-                Debug.Log(file);
-                //var item = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
-                //Debug.Log(item.name);
-                //Debug.Log(item.text);
-                //var lines = item.text.Split(retCode).Select(v => v.Split(commaCode));
-
-                var lines = new List<string[]>();
-                using (var sr = new StreamReader(file))
-                {
-                    string line;
-                    while ((line = sr.ReadLine()) != null)
-                    {
-                        lines.Add(line.Split(commaCode));
-                    }
-                }
-
-                data2.Add(new()
-                {
-                    name = Regex.Match(file, @"([^/]+)\.[a-zA-Z0-9]+$").Groups[1].Value,
-                    keys = Enumerable.Repeat(0, lines?.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
-                    {
-                        key = lines?.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
-                        type = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
-                        comment = lines?.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
-                    }).ToArray(),
-                });
-            }
+            await reader.CreateFileList();
+            await reader.ReadText();
+            reader.CreateData();
             EditorUtility.ClearProgressBar();
 
-            //var data2 = data.list.Concat(append).ToArray();
-
             // create classes
-            CreateMasterDataDBClasses(data2, $"{settings.OutputPath}/{settings.DBClassesFileName}.cs");
+            CreateMasterDataDBClasses(reader.data3, reader.DBClassesPath);
 
             // create data
-            CreateMasterDataData(data2, $"{settings.OutputPath}/{settings.DataFileName}.cs");
+            CreateMasterDataData(reader.data3, reader.DBDataPath);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -334,7 +253,7 @@ namespace EbMasterData.Editor
         //    AssetDatabase.Refresh();
         //}
 
-        private static void CreateMasterDataData(List<KeysData2> data, string path)
+        private static void CreateMasterDataData(List<Reader.KeysData2> data, string path)
         {
             var res = new List<string>
             {
@@ -401,7 +320,7 @@ namespace EbMasterData.Editor
             WriteFile(res, path);
         }
 
-        private static void CreateMasterDataDBClasses(List<KeysData2> data, string path)
+        private static void CreateMasterDataDBClasses(List<Reader.KeysData2> data, string path)
         {
             var res = new List<string>
             {
@@ -442,8 +361,10 @@ namespace EbMasterData.Editor
             WriteFile(res, path);
         }
 
-        private static List<string> CreateClassFileEach1(KeysData2 data, string[] allClasses)
+        private static List<string> CreateClassFileEach1(Reader.KeysData2 data, string[] allClasses)
         {
+            //return new List<string>();
+            //Reader.KeysData2 data = null;
             data.keys = data.keys.Where(v => v.key != primaryKey).ToArray();
 
             var useBase = classBase0;
