@@ -31,8 +31,5 @@ MonoBehaviour:
     Name: Ghi
   SprData:
   - Id: 1
-    Value: 11
   - Id: 2
-    Value: 12
   - Id: 3
-    Value: 13

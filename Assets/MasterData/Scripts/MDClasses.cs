@@ -5,23 +5,12 @@ using UnityEngine;
 namespace MasterData
 {
     [System.Serializable]
-    public class DBClassBase
+    public abstract class DBClassBase
     {
         public string Id; // ID
 
-        public DBClassBase(string text)
-        {
-        }
-    }
-
-    [System.Serializable]
-    public class DBClassRate : DBClassBase
-    {
-        public string Rate;
-
-        public DBClassRate(string text) : base(text)
-        {
-        }
+        protected string Parse_string(string v) => v;
+        protected int Parse_int(string v) => int.Parse(v);
     }
 
     [System.Serializable]
@@ -30,12 +19,11 @@ namespace MasterData
         public int Value; // Value of data
         public string OrderText; // Display order text
 
-        public DBClassAdrData(string text) : base(text)
+        public DBClassAdrData(params string[] lines)
         {
-            var lines = text.Split(",");
-            Id = lines[0];
-            Value = int.Parse(lines[1]);
-            OrderText = lines[2];
+            Id = Parse_string(lines[0]);
+            Value = Parse_int(lines[1]);
+            OrderText = Parse_string(lines[2]);
         }
     }
 
@@ -44,24 +32,24 @@ namespace MasterData
     {
         public string Name; // Name of data
 
-        public DBClassStrData(string text) : base(text)
+        public DBClassStrData(params string[] lines)
         {
-            var lines = text.Split(",");
-            Id = lines[0];
-            Name = lines[1];
+            Id = Parse_string(lines[0]);
+            Name = Parse_string(lines[1]);
         }
     }
 
     [System.Serializable]
     public class DBClassSprData : DBClassBase
     {
-        public int Value; // Value of data
+        //public SprSub1 Sub1; // Index of Sub1
+        //public SprSub2[] Sub2; // Index of Sub2
 
-        public DBClassSprData(string text) : base(text)
+        public DBClassSprData(params string[] lines)
         {
-            var lines = text.Split(",");
-            Id = lines[0];
-            Value = int.Parse(lines[1]);
+            Id = Parse_string(lines[0]);
+            //Sub1 = Parse_SprSub1(lines[1]);
+            //Sub2 = Parse_SprSub2Array(lines[2]);
         }
     }
 }

@@ -33,15 +33,10 @@ namespace MasterData
 
         private T[] ConvertList<T>(string[] res) where T : DBClassBase
         {
-            Debug.Log(res[0]);
-            Debug.Log(res[1]);
-
-            var lines = res[1]
+            return res[1]
                 .Split(returnCode)
-                .Skip(3);
-
-            return lines
-                .Select(v => System.Activator.CreateInstance(typeof(T), new object[] { v }) as T)
+                .Skip(3)
+                .Select(v => System.Activator.CreateInstance(typeof(T), new object[] { v.Split(commaCode) }) as T)
                 .ToArray();
         }
     }

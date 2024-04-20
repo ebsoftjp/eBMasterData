@@ -15,12 +15,12 @@ namespace EbMasterData.Editor
         private const string masterClassName = "Data";
         private const string tablePrefix = "DBClass";
         private const string classBase0 = "Base";
-        private const string classBase1 = "Rate";
+        //private const string classBase1 = "Rate";
         //private const string classBase2 = "base2";
         private const string primaryKey = "Id";
         private const string idSuffix = "Id";
         private const string commaCode = ",";
-        private const string subKey = "Rate";
+        //private const string subKey = "Rate";
         private const string configKey = "Config";
         //private static readonly string[][] subKeys = new string[][]
         //{
@@ -274,16 +274,21 @@ namespace EbMasterData.Editor
 
         private static void CreateMasterDataData(List<Reader.KeysData2> data, string path)
         {
+            var settings = Resources.Load<Settings>(Paths.SettingsPath);
+
             var res = new List<string>
             {
                 $"// Auto create by DBClassConvert",
+                $"using System.Linq;",
                 $"using UnityEngine;",
-                //$"using Newtonsoft.Json;",
                 $"",
                 $"namespace MasterData",
                 $"{{",
                 $"    public class {masterClassName} : ScriptableObject",
                 $"    {{",
+                $"        protected const string returnCode = \"{settings.LineSplitString}\";",
+                $"        protected const string commaCode = \"{settings.FieldSplitString}\";",
+                $"",
                 $"        public static {masterClassName} Tables;",
                 $"",
             };
@@ -310,26 +315,27 @@ namespace EbMasterData.Editor
                 $"            _ => null,",
                 $"        }};",
                 $"",
-                $"        public void Convert2(string[] res)",
+                $"        public void Convert2(string[][] res)",
                 $"        {{",
                 $"            foreach (var item in res) Debug.Log(item);",
             });
 
             foreach (var v in data)
             {
-                res.Add($"            {v.name} = ConvertList<{tablePrefix}{v.name}>(\"{v.name}\", res);");
+                res.Add($"            {v.name} = ConvertList<{tablePrefix}{v.name}>(res.FirstOrDefault(v => v[0] == \"{v.name}\"));");
             }
 
             res.AddRange(new List<string>
             {
                 $"        }}",
                 $"",
-                $"        private T[] ConvertList<T>(string key, string[] res)",
+                $"        private T[] ConvertList<T>(string[] res) where T : {tablePrefix}{classBase0}",
                 $"        {{",
-                $"            var index = System.Array.IndexOf(res, key);",
-                $"            return (index >= 0 && index + 1 < res.Length)",
-                $"                ? JsonConvert.DeserializeObject<T[]>(res[index + 1])",
-                $"                : new T[0];",
+                $"            return res[1]",
+                $"                .Split(returnCode)",
+                $"                .Skip(3)",
+                $"                .Select(v => System.Activator.CreateInstance(typeof(T), new object[] {{ v.Split(commaCode) }}) as T)",
+                $"                .ToArray();",
                 $"        }}",
                 $"    }}",
                 $"}}",
@@ -350,15 +356,12 @@ namespace EbMasterData.Editor
                 $"namespace MasterData",
                 $"{{",
                 $"    [System.Serializable]",
-                $"    public class {tablePrefix}{classBase0}",
+                $"    public abstract class {tablePrefix}{classBase0}",
                 $"    {{",
                 $"        public string {primaryKey}; // ID",
-                $"    }}",
                 $"",
-                $"    [System.Serializable]",
-                $"    public class {tablePrefix}{classBase1} : {tablePrefix}{classBase0}",
-                $"    {{",
-                $"        public string {subKey};",
+                $"        protected string Parse_string(string v) => v;",
+                $"        protected int Parse_int(string v) => int.Parse(v);",
                 $"    }}",
             };
 
@@ -383,20 +386,11 @@ namespace EbMasterData.Editor
 
         private static List<string> CreateClassFileEach1(Reader.KeysData2 data, string[] allClasses)
         {
-            //return new List<string>();
-            //Reader.KeysData2 data = null;
-            data.keys = data.keys.Where(v => v.key != primaryKey).ToArray();
+            var keys2 = data.keys.Where(v => v.key != primaryKey).ToArray();
 
             var useBase = classBase0;
-            if (data.keys.Length == 2 && data.keys[1].key == subKey)
-            {
-                useBase = classBase1;
-                data.keys = data.keys
-                    .Where(v => v.key != subKey)
-                    .ToArray();
-            }
 
-            // param
+            // begin
             var res = new List<string>()
             {
                 $"",
@@ -405,10 +399,10 @@ namespace EbMasterData.Editor
                 $"    {{",
             };
 
-            res.AddRange(data.keys.Select(v => $"        public {v.type} {v.key}; // {v.comment.Replace("\n", "")}"));
+            res.AddRange(keys2.Select(v => $"        public {v.type} {v.key}; // {v.comment.Replace("\n", "")}"));
 
             // reference
-            var refClasses = data.keys
+            var refClasses = keys2
                 .Where(v => Regex.IsMatch(v.key, $"{idSuffix}$"))
                 .ToArray();
 
@@ -452,7 +446,7 @@ namespace EbMasterData.Editor
             }
 
             // vector
-            var vecClasses = data.keys
+            var vecClasses = keys2
                 .Where(v => Regex.IsMatch(v.key, @"X$"))
                 .ToArray();
 
@@ -472,7 +466,22 @@ namespace EbMasterData.Editor
                     }));
             }
 
-            res.Add($"    }}");
+            // constructor
+            res.AddRange(new List<string>()
+            {
+                $"",
+                $"        public {tablePrefix}{data.name}(params string[] lines)",
+                $"        {{",
+            });
+
+            res.AddRange(data.keys.Select((v, n) => $"            {v.key} = Parse_{v.type.Replace("[]", "Array")}(lines[{n}]);"));
+
+            // end
+            res.AddRange(new List<string>()
+            {
+                $"        }}",
+                $"    }}",
+            });
 
             return res;
         }

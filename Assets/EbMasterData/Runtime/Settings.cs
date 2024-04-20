@@ -14,6 +14,12 @@ namespace EbMasterData
         [Header("Classes file name")]
         public string DBClassesFileName = "MDClasses";
 
+        [Header("Data line split string")]
+        public string LineSplitString = "\\r\\n";
+
+        [Header("Data field split string")]
+        public string FieldSplitString = ",";
+
         [Header("Data sources")]
         public SettingsDataSource[] Sources;
     }

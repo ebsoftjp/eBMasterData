@@ -15,6 +15,8 @@ MonoBehaviour:
   OutputPath: Assets/MasterData/Scripts/
   DataFileName: MDData
   DBClassesFileName: MDClasses
+  LineSplitString: \r\n
+  FieldSplitString: ','
   Sources:
   - Path: Assets/CSV
     AddressablesLabel: CSV
