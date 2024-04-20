@@ -23,7 +23,7 @@ namespace EbMasterData
         }
 
         protected readonly List<LoadData> files2 = new();
-        protected readonly List<LoadedText> data2 = new();
+        public readonly List<LoadedText> data2 = new();
         public readonly List<KeysData2> data3 = new();
 
         public class LoadedText

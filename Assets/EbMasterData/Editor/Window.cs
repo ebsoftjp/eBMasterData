@@ -25,19 +25,26 @@ namespace EbMasterData.Editor
                 Convert.InitData();
             }
 
-            rect.y += 40;
+            var addy = 32f;
+            rect.y += addy;
             if (GUI.Button(rect, "Open Settings"))
             {
                 Selection.activeObject = AssetDatabase.LoadAssetAtPath<Settings>(Paths.SettingsFullPath);
             }
 
-            rect.y += 40;
+            rect.y += addy;
             if (GUI.Button(rect, "Convert"))
             {
                 Convert.ConvertDBClasses();
             }
 
-            rect.y += 40;
+            rect.y += addy;
+            if (GUI.Button(rect, "Dump"))
+            {
+                Convert.DumpData();
+            }
+
+            rect.y += addy;
             if (GUI.Button(rect, "Close"))
             {
                 Close();

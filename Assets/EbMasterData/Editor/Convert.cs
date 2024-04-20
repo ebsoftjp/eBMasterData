@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 //using Newtonsoft.Json;
@@ -9,7 +10,7 @@ using EbMasterData;
 
 namespace EbMasterData.Editor
 {
-    public class Convert
+    public static class Convert
     {
         private const string masterClassName = "Data";
         private const string tablePrefix = "DBClass";
@@ -98,41 +99,32 @@ namespace EbMasterData.Editor
             // create data
             CreateMasterDataData(reader.data3, reader.DBDataPath);
 
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            EditorUtility.FocusProjectWindow();
+            // 
+
+            Save();
         }
 
-        //[MenuItem("Tools/DB download", false, 102)]
-        //private static async void DownloadDB()
-        //{
-        //    // get server data
-        //    var d = new MasterData.Downloader();
-        //    var res = await d.Download2(DownloadIndicator);
-        //    //var res = await d.DownloadDummy2(DownloadIndicator);
-        //    EditorUtility.ClearProgressBar();
+        public static async void DumpData()
+        {
+            // get data
+            var reader = new ReaderForEditor(DownloadIndicator);
 
-        //    // add local
-        //    var files = Directory.GetFiles("Assets/CSV/", "*.csv");
-        //    var append = new List<string>();
-        //    foreach (var file in files)
-        //    {
-        //        var item = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
-        //        var lines = item.text.Split(retCode).Where(v => v != "").Select(v => v.Split(commaCode));
-        //        append.Add(item.name);
-        //        var keys = lines?.FirstOrDefault() ?? new string[0];
-        //        append.Add("[" + string.Join(",", lines?.Skip(2)?
-        //            .Select(v => $"{{{string.Join(",", v.Select((s, n) => $"\"{keys[n]}\":\"{s}\""))}}}")
-        //            ?? new string[0]) + "]");
-        //    }
-        //    EditorUtility.ClearProgressBar();
+            await reader.CreateFileList();
+            await reader.ReadText();
+            EditorUtility.ClearProgressBar();
 
-        //    var data = AssetDatabase.LoadAssetAtPath<MasterData.Data>("Assets/Resources/DBMasters.asset");
-        //    data.Convert2(res.Concat(append).ToArray());
-        //    EditorUtility.SetDirty(data);
-        //    AssetDatabase.SaveAssets();
-        //    AssetDatabase.Refresh();
-        //}
+            // create data
+            //DumpMasterData(reader.data3, reader.DBClassesPath);
+            var obj = ScriptableObject.CreateInstance("MasterData.Data");
+            Debug.Log(obj);
+            var type = obj.GetType();
+            Debug.Log(type);
+            MethodInfo info = type.GetMethod("Convert2");
+            info.Invoke(obj, new object[] { reader.data2.Select(v => new string[] { v.Name, v.Text }).ToArray() });
+            AssetDatabase.CreateAsset(obj, Paths.DataFullPath);
+
+            Save();
+        }
 
         //[MenuItem("Tools/DB config", false, 104)]
         //private static void CreateDBConfig()
@@ -334,14 +326,14 @@ namespace EbMasterData.Editor
                 $"",
                 $"        private T[] ConvertList<T>(string key, string[] res)",
                 $"        {{",
-                //$"            var index = System.Array.IndexOf(res, key);",
-                //$"            return (index >= 0 && index + 1 < res.Length)",
-                //$"                ? JsonConvert.DeserializeObject<T[]>(res[index + 1])",
-                //$"                : new T[0];",
-                $"            return null;",
+                $"            var index = System.Array.IndexOf(res, key);",
+                $"            return (index >= 0 && index + 1 < res.Length)",
+                $"                ? JsonConvert.DeserializeObject<T[]>(res[index + 1])",
+                $"                : new T[0];",
                 $"        }}",
                 $"    }}",
                 $"}}",
+                $"",
             });
 
             WriteFile(res, path);
@@ -383,6 +375,7 @@ namespace EbMasterData.Editor
             res.AddRange(new List<string>
             {
                 $"}}",
+                $"",
             });
 
             WriteFile(res, path);
@@ -527,7 +520,7 @@ namespace EbMasterData.Editor
             CreateFile(path);
 
             var sw = new StreamWriter(path, false);
-            sw.WriteLine(string.Join("\n", res));
+            sw.Write(string.Join("\n", res));
             sw.Flush();
             sw.Close();
 
