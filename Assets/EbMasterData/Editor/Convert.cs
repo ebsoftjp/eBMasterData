@@ -46,6 +46,13 @@ namespace EbMasterData.Editor
             return isCancel;
         }
 
+        private static void Save()
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            EditorUtility.FocusProjectWindow();
+        }
+
         public static void InitData()
         {
             var path = Paths.SettingsFullPath;
@@ -53,6 +60,26 @@ namespace EbMasterData.Editor
             if (File.Exists(path)) return;
             var settings = ScriptableObject.CreateInstance<Settings>();
             AssetDatabase.CreateAsset(settings, path);
+
+            WriteFile(new List<string>
+            {
+                $"{{",
+                $"    \"name\": \"{Paths.NameSpace}\",",
+                $"    \"rootNamespace\": \"\",",
+                $"    \"references\": [],",
+                $"    \"includePlatforms\": [],",
+                $"    \"excludePlatforms\": [],",
+                $"    \"allowUnsafeCode\": false,",
+                $"    \"overrideReferences\": false,",
+                $"    \"precompiledReferences\": [],",
+                $"    \"autoReferenced\": true,",
+                $"    \"defineConstraints\": [],",
+                $"    \"versionDefines\": [],",
+                $"    \"noEngineReferences\": false",
+                $"}}",
+            }, Paths.AsmFullPath);
+
+            Save();
         }
 
         public static async void ConvertDBClasses()
