@@ -12,8 +12,6 @@ namespace EbMasterData
 {
     public class Reader
     {
-        protected const string commaCode = ",";
-        protected const string retCode = "\r\n";
         protected readonly Dictionary<string, string> loadCache = new();
 
         [System.Serializable]
@@ -144,11 +142,8 @@ namespace EbMasterData
             {
                 ResponseAction = req =>
                 {
-                    Debug.Log($"ResponseAction");
-                    // Content-Disposition: attachment; filename="EbMasterData-SprData.csv"; filename*=UTF-8''EbMasterData%20-%20SprData.csv
                     var file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
                         @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
-                    Debug.Log($"\"{file}\"");
                 },
             };
             var text = await dl.Get();
@@ -157,30 +152,11 @@ namespace EbMasterData
 
         protected virtual async Task<LoadedText> ReadFromFile(LoadData item)
         {
-            //var files = item.Src.Format switch
-            //{
-            //    DsFormat.CSV => Directory.GetFiles(item.Path, "*.csv"),
-            //    DsFormat.JSON => Directory.GetFiles(item.Path, "*.json"),
-            //    _ => null,
-            //};
-
-            //var file = files[i];
-
-            //// cancel from editor
-            //var isCancel = indicatorFunc?.Invoke(i, files.Length, file) ?? false;
-            //if (isCancel) return null;
-
-            //Debug.Log(file);
-            //var item = AssetDatabase.LoadAssetAtPath<TextAsset>(file);
-            //Debug.Log(item.name);
-            //Debug.Log(item.text);
-            //var lines = item.text.Split(retCode).Select(v => v.Split(commaCode));
-
             using (var sr = new StreamReader(item.Path))
             {
-                //data2.Add(TextToData(file, await sr.ReadToEndAsync()));
                 var res = await sr.ReadToEndAsync();
                 sr.Close();
+
                 return new()
                 {
                     Name = PathToTableName(item.Path),
@@ -191,9 +167,10 @@ namespace EbMasterData
 
         protected KeysData2 TextToData(LoadedText data)
         {
-            //Debug.Log(data.Name);
-            var parser = new Parser(retCode, commaCode);
+            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
+            parser.IsOutputLog = true;
             var lines = parser.Exec(data.Text);
+
             return new()
             {
                 name = data.Name,

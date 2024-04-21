@@ -15,17 +15,9 @@ namespace EbMasterData.Editor
         private const string masterClassName = "Data";
         private const string tablePrefix = "DBClass";
         private const string classBase0 = "Base";
-        //private const string classBase1 = "Rate";
-        //private const string classBase2 = "base2";
         private const string primaryKey = "Id";
         private const string idSuffix = "Id";
-        private const string commaCode = ",";
-        //private const string subKey = "Rate";
         private const string configKey = "Config";
-        //private static readonly string[][] subKeys = new string[][]
-        //{
-        //    new string[] { "Rate" },
-        //};
         private static readonly string[] vecArray = new string[]
         {
             "VecData",
