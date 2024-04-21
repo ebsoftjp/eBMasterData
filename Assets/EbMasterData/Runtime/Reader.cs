@@ -16,28 +16,45 @@ namespace EbMasterData
         protected const string retCode = "\r\n";
         protected readonly Dictionary<string, string> loadCache = new();
 
+        [System.Serializable]
         protected class LoadData
         {
             public string Path;
             public SettingsDataSource Src;
         }
 
+        [System.Serializable]
+        protected class CustomAPIData
+        {
+            public CustomAPIItem[] List;
+        }
+
+        [System.Serializable]
+        protected class CustomAPIItem
+        {
+            public string Name;
+            public string Text;
+        }
+
         protected readonly List<LoadData> files2 = new();
         public readonly List<LoadedText> data2 = new();
         public readonly List<KeysData2> data3 = new();
 
+        [System.Serializable]
         public class LoadedText
         {
             public string Name;
             public string Text;
         }
 
+        [System.Serializable]
         public class KeysData2
         {
             public string name;
             public KeysData3[] keys;
         }
 
+        [System.Serializable]
         public class KeysData3
         {
             public string key;
@@ -66,6 +83,7 @@ namespace EbMasterData
             {
                 var res = item.Src.DataType switch
                 {
+                    DsDataType.CustomAPI => await ReadFromCustomAPI(item),
                     DsDataType.Addressables => await ReadFromAddressables(item),
                     DsDataType.StreamingAssets => await ReadFromStreamingAssets(item),
                     DsDataType.GoogleSpreadSheet => await ReadFromGoogleSpreadSheet(item),
@@ -92,6 +110,13 @@ namespace EbMasterData
             {
                 data3.Add(TextToData(data2[i]));
             }
+        }
+
+        protected virtual async Task<LoadedText> ReadFromCustomAPI(LoadData item)
+        {
+            var dl = new DownloaderText(item.Path, false);
+            var text = await dl.Get();
+            return null;
         }
 
         protected virtual async Task<LoadedText> ReadFromAddressables(LoadData item)

@@ -93,15 +93,15 @@ namespace EbMasterData.Editor
             reader.CreateData();
             EditorUtility.ClearProgressBar();
 
-            // create classes
-            CreateMasterDataDBClasses(reader.data3, reader.DBClassesPath);
+            //// create classes
+            //CreateMasterDataDBClasses(reader.data3, reader.DBClassesPath);
 
-            // create data
-            CreateMasterDataData(reader.data3, reader.DBDataPath);
+            //// create data
+            //CreateMasterDataData(reader.data3, reader.DBDataPath);
 
             // 
 
-            Save();
+            //Save();
         }
 
         public static async void DumpData()
@@ -116,10 +116,7 @@ namespace EbMasterData.Editor
             // create data
             //DumpMasterData(reader.data3, reader.DBClassesPath);
             var obj = ScriptableObject.CreateInstance("MasterData.Data");
-            Debug.Log(obj);
-            var type = obj.GetType();
-            Debug.Log(type);
-            MethodInfo info = type.GetMethod("Convert2");
+            MethodInfo info = obj.GetType().GetMethod("Convert2");
             info.Invoke(obj, new object[] { reader.data2.Select(v => new string[] { v.Name, v.Text }).ToArray() });
             AssetDatabase.CreateAsset(obj, Paths.DataFullPath);
 
@@ -359,9 +356,6 @@ namespace EbMasterData.Editor
                 $"    public abstract class {tablePrefix}{classBase0}",
                 $"    {{",
                 $"        public string {primaryKey}; // ID",
-                $"",
-                $"        protected string Parse_string(string v) => v;",
-                $"        protected int Parse_int(string v) => int.Parse(v);",
                 $"    }}",
             };
 
@@ -474,7 +468,15 @@ namespace EbMasterData.Editor
                 $"        {{",
             });
 
-            res.AddRange(data.keys.Select((v, n) => $"            {v.key} = Parse_{v.type.Replace("[]", "Array")}(lines[{n}]);"));
+            res.AddRange(data.keys.Select((v, n) =>
+            {
+                var parse = v.type switch
+                {
+                    "int" => $"int.Parse(lines[{n}])",
+                    _ => $"lines[{n}]",
+                };
+                return $"            {v.key} = {parse};";
+            }));
 
             // end
             res.AddRange(new List<string>()

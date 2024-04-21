@@ -8,9 +8,6 @@ namespace MasterData
     public abstract class DBClassBase
     {
         public string Id; // ID
-
-        protected string Parse_string(string v) => v;
-        protected int Parse_int(string v) => int.Parse(v);
     }
 
     [System.Serializable]
@@ -21,9 +18,9 @@ namespace MasterData
 
         public DBClassAdrData(params string[] lines)
         {
-            Id = Parse_string(lines[0]);
-            Value = Parse_int(lines[1]);
-            OrderText = Parse_string(lines[2]);
+            Id = lines[0];
+            Value = int.Parse(lines[1]);
+            OrderText = lines[2];
         }
     }
 
@@ -34,22 +31,22 @@ namespace MasterData
 
         public DBClassStrData(params string[] lines)
         {
-            Id = Parse_string(lines[0]);
-            Name = Parse_string(lines[1]);
+            Id = lines[0];
+            Name = lines[1];
         }
     }
 
     [System.Serializable]
     public class DBClassSprData : DBClassBase
     {
-        //public SprSub1 Sub1; // Index of Sub1
-        //public SprSub2[] Sub2; // Index of Sub2
+        public string Sub1; // Index of Sub1
+        public string Sub2; // Index of Sub2
 
         public DBClassSprData(params string[] lines)
         {
-            Id = Parse_string(lines[0]);
-            //Sub1 = Parse_SprSub1(lines[1]);
-            //Sub2 = Parse_SprSub2Array(lines[2]);
+            Id = lines[0];
+            Sub1 = lines[1];
+            Sub2 = lines[2];
         }
     }
 }

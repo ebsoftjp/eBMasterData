@@ -20,6 +20,7 @@ namespace EbMasterData.Editor
                 Debug.Log($"{src.DataType}, {src.Format}, {src.Path}");
                 var res = src.DataType switch
                 {
+                    DsDataType.CustomAPI => await CreateFileListFromCustomAPI(src),
                     DsDataType.Addressables => await CreateFileListCommon(src),
                     DsDataType.StreamingAssets => await CreateFileListCommon(src),
                     DsDataType.GoogleSpreadSheet => await CreateFileListFromSpreadSheet(src),
@@ -51,6 +52,25 @@ namespace EbMasterData.Editor
                     Path = v,
                     Src = src,
                 }).ToList();
+        }
+
+        private async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src)
+        {
+            var dl = new DownloaderText(src.Path, false);
+            var text = await dl.Get();
+            Debug.Log(text);
+            var data = JsonUtility.FromJson<CustomAPIData>($"{{\"List\":{text}}}");
+            foreach (var item in data.List)
+            {
+                loadCache[item.Name] = item.Text;
+            }
+            return data.List
+                .Select(v => new LoadData()
+                {
+                    Path = v.Name,
+                    Src = src,
+                })
+                .ToList();
         }
 
         private async Task<List<LoadData>> CreateFileListFromSpreadSheet(SettingsDataSource src)
