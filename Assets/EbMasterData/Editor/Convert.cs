@@ -7,8 +7,10 @@ using UnityEditor;
 
 namespace EbMasterData.Editor
 {
-    public static class Convert
+    public class Convert
     {
+        private Settings settings;
+
         private class ConfigData
         {
             public string type;
@@ -16,7 +18,15 @@ namespace EbMasterData.Editor
             public string key;
         }
 
-        private static bool DownloadIndicator(int cur, int max, string text)
+        public Convert()
+        {
+            if (File.Exists(Paths.SettingsFullPath))
+            {
+                settings = Resources.Load<Settings>(Paths.SettingsPath);
+            }
+        }
+
+        private bool DownloadIndicator(int cur, int max, string text)
         {
             var isCancel = EditorUtility.DisplayCancelableProgressBar(
                 text,
@@ -25,20 +35,19 @@ namespace EbMasterData.Editor
             return isCancel;
         }
 
-        private static void Save()
+        private void Save()
         {
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             EditorUtility.FocusProjectWindow();
         }
 
-        public static void InitData()
+        public void InitData()
         {
-            var path = Paths.SettingsFullPath;
-            CreateDir(path);
-            if (File.Exists(path)) return;
-            var settings = ScriptableObject.CreateInstance<Settings>();
-            AssetDatabase.CreateAsset(settings, path);
+            CreateDir(Paths.SettingsFullPath);
+            if (File.Exists(Paths.SettingsFullPath)) return;
+            settings = ScriptableObject.CreateInstance<Settings>();
+            AssetDatabase.CreateAsset(settings, Paths.SettingsFullPath);
 
             WriteFile(new List<string>
             {
@@ -61,7 +70,7 @@ namespace EbMasterData.Editor
             Save();
         }
 
-        public static async void ConvertDBClasses()
+        public async void ConvertDBClasses()
         {
             // get data
             var reader = new ReaderForEditor(DownloadIndicator);
@@ -72,15 +81,17 @@ namespace EbMasterData.Editor
             EditorUtility.ClearProgressBar();
 
             // create classes
-            WriteFile(ConvertClasses.CreateMasterDataDBClasses(reader.data3), reader.DBClassesPath);
+            var cc = new ConvertClasses(settings);
+            WriteFile(cc.CreateMasterDataDBClasses(reader.data3), reader.DBClassesPath);
 
             // create data
-            WriteFile(ConvertData.CreateMasterDataData(reader.data3), reader.DBDataPath);
+            var cd = new ConvertData(settings);
+            WriteFile(cd.CreateMasterDataData(reader.data3), reader.DBDataPath);
 
             Save();
         }
 
-        public static async void DumpData()
+        public async void DumpData()
         {
             // get data
             var reader = new ReaderForEditor(DownloadIndicator);
@@ -90,24 +101,22 @@ namespace EbMasterData.Editor
             EditorUtility.ClearProgressBar();
 
             // parser
-            var settings = Resources.Load<Settings>(Paths.SettingsPath);
             var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
 
             // create data
-            var obj = ScriptableObject.CreateInstance("MasterData.Data");
+            var obj = ScriptableObject.CreateInstance($"{settings.NamespaceName}.{settings.DataFileName}");
             obj.GetType().GetMethod("Convert2").Invoke(obj,
                 new object[]
                 {
                     reader.data2.Select(v => v.Name).ToArray(),
-                    reader.data2.Select(v => parser.Exec(v.Text).Skip(Paths.HeaderLines).ToArray()).ToArray(),
+                    reader.data2.Select(v => parser.Exec(v.Text).Skip(settings.HeaderLines).ToArray()).ToArray(),
                 });
             AssetDatabase.CreateAsset(obj, Paths.DataFullPath);
 
             Save();
         }
 
-        //[MenuItem("Tools/DB config", false, 104)]
-        //private static void CreateDBConfig()
+        //private void CreateDBConfig()
         //{
         //    // get data
         //    var data = AssetDatabase.LoadAssetAtPath<MasterData.Data>("Assets/Resources/DBMasters.asset");
@@ -252,14 +261,14 @@ namespace EbMasterData.Editor
         //    AssetDatabase.Refresh();
         //}
 
-        private static void CreateDir(string path)
+        private void CreateDir(string path)
         {
             var dir = Regex.Replace(path, @"[^/]+?$", "");
             if (Directory.Exists(dir)) return;
             Directory.CreateDirectory(dir);
         }
 
-        private static void CreateFile(string path)
+        private void CreateFile(string path)
         {
             if (File.Exists(path)) return;
 
@@ -269,7 +278,7 @@ namespace EbMasterData.Editor
             AssetDatabase.ImportAsset(path);
         }
 
-        private static void WriteFile(List<string> res, string path)
+        private void WriteFile(List<string> res, string path)
         {
             CreateFile(path);
 

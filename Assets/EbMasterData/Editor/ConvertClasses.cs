@@ -5,28 +5,34 @@ using UnityEditor;
 
 namespace EbMasterData.Editor
 {
-    public static class ConvertClasses
+    public class ConvertClasses
     {
-        private const string masterClassName = "Data";
-        private const string tablePrefix = "DBClass";
-        private const string classBase0 = "Base";
-        private const string primaryKey = "Id";
-        private const string idSuffix = "Id";
-        private const string configKey = "Config";
+        private string tablePrefix => settings.ClassNamePrefix;
+        private string classBase0 => settings.ClassNameBase;
+        private string primaryKey => settings.ClassPrimaryKey;
+        private string idSuffix => primaryKey;
+        //private string configKey = "Config";
         private static readonly string[] vecArray = new string[]
         {
             "VecData",
         };
 
-        public static List<string> CreateMasterDataDBClasses(List<Reader.KeysData2> data)
+        private readonly Settings settings;
+
+        public ConvertClasses(Settings settings)
+        {
+            this.settings = settings;
+        }
+
+        public List<string> CreateMasterDataDBClasses(List<Reader.KeysData2> data)
         {
             var res = new List<string>
             {
-                $"// Auto create by DBClassConvert",
+                $"// Auto create by EbMasterData.ConvertClasses",
                 $"using System.Linq;",
                 $"using UnityEngine;",
                 $"",
-                $"namespace MasterData",
+                $"namespace {settings.NamespaceName}",
                 $"{{",
                 $"    [System.Serializable]",
                 $"    public abstract class {tablePrefix}{classBase0}",
@@ -54,7 +60,7 @@ namespace EbMasterData.Editor
             return res;
         }
 
-        private static List<string> CreateClassFileEach1(Reader.KeysData2 data, string[] allClasses)
+        private List<string> CreateClassFileEach1(Reader.KeysData2 data, string[] allClasses)
         {
             var keys2 = data.keys.Where(v => v.key != primaryKey).ToArray();
 
@@ -164,7 +170,7 @@ namespace EbMasterData.Editor
             return res;
         }
 
-        private static List<string> CreateClassFileEach2(string key1, string[] keys2)
+        private List<string> CreateClassFileEach2(string key1, string[] keys2)
         {
             // param
             var res = new List<string>()

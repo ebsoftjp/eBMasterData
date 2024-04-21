@@ -60,7 +60,7 @@ namespace EbMasterData
             public string comment;
         }
 
-        public string DBClassesPath => $"{settings.OutputPath}/{settings.DBClassesFileName}.cs";
+        public string DBClassesPath => $"{settings.OutputPath}/{settings.ClassesFileName}.cs";
         public string DBDataPath => $"{settings.OutputPath}/{settings.DataFileName}.cs";
 
         protected readonly System.Func<int, int, string, bool> indicatorFunc;

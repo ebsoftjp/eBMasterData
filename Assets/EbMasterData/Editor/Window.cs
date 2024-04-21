@@ -19,10 +19,11 @@ namespace EbMasterData.Editor
 
             EditorGUILayout.LabelField("EbMasterData control panel");
             var rect = new Rect(40.0f, 60.0f, 240.0f, 20.0f);
+            var cv = new Convert();
 
             if (GUI.Button(rect, "Init"))
             {
-                Convert.InitData();
+                cv.InitData();
             }
 
             var addy = 32f;
@@ -35,13 +36,13 @@ namespace EbMasterData.Editor
             rect.y += addy;
             if (GUI.Button(rect, "Convert"))
             {
-                Convert.ConvertDBClasses();
+                cv.ConvertDBClasses();
             }
 
             rect.y += addy;
             if (GUI.Button(rect, "Dump"))
             {
-                Convert.DumpData();
+                cv.DumpData();
             }
 
             rect.y += addy;

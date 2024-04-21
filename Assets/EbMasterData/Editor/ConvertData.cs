@@ -2,21 +2,28 @@
 
 namespace EbMasterData.Editor
 {
-    public static class ConvertData
+    public class ConvertData
     {
-        private const string masterClassName = "Data";
-        private const string tablePrefix = "DBClass";
-        private const string classBase0 = "Base";
+        private string masterClassName => settings.DataFileName;
+        private string tablePrefix => settings.ClassNamePrefix;
+        private string classBase0 => settings.ClassNameBase;
 
-        public static List<string> CreateMasterDataData(List<Reader.KeysData2> data)
+        private readonly Settings settings;
+
+        public ConvertData(Settings settings)
+        {
+            this.settings = settings;
+        }
+
+        public List<string> CreateMasterDataData(List<Reader.KeysData2> data)
         {
             var res = new List<string>
             {
-                $"// Auto create by DBClassConvert",
+                $"// Auto create by EbMasterData.ConvertData",
                 $"using System.Linq;",
                 $"using UnityEngine;",
                 $"",
-                $"namespace MasterData",
+                $"namespace {settings.NamespaceName}",
                 $"{{",
                 $"    public class {masterClassName} : ScriptableObject",
                 $"    {{",
