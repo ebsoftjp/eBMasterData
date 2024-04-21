@@ -192,7 +192,8 @@ namespace EbMasterData
         protected KeysData2 TextToData(LoadedText data)
         {
             //Debug.Log(data.Name);
-            var lines = data.Text.Split(retCode).Select(v => v.Split(commaCode));
+            var parser = new Parser(retCode, commaCode);
+            var lines = parser.Exec(data.Text);
             return new()
             {
                 name = data.Name,
