@@ -105,11 +105,20 @@ namespace EbMasterData.Editor
             await reader.ReadText();
             EditorUtility.ClearProgressBar();
 
+            // parser
+            var settings = Resources.Load<Settings>(Paths.SettingsPath);
+            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
+
             // create data
             //DumpMasterData(reader.data3, reader.DBClassesPath);
             var obj = ScriptableObject.CreateInstance("MasterData.Data");
             MethodInfo info = obj.GetType().GetMethod("Convert2");
-            info.Invoke(obj, new object[] { reader.data2.Select(v => new string[] { v.Name, v.Text }).ToArray() });
+            info.Invoke(obj,
+                new object[]
+                {
+                    reader.data2.Select(v => v.Name).ToArray(),
+                    reader.data2.Select(v => parser.Exec(v.Text).Skip(3).ToArray()).ToArray(),
+                });
             AssetDatabase.CreateAsset(obj, Paths.DataFullPath);
 
             Save();
