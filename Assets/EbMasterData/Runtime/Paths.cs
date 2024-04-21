@@ -10,5 +10,7 @@ namespace EbMasterData
         public static string SettingsFullPath => $"{BasePath}/Resources/{SettingsPath}.asset";
         public static string DataFullPath => $"{BasePath}/Resources/EbMasterData/Data.asset";
         public static string AsmFullPath => $"{BasePath}/{NameSpace}.asmdef";
+
+        public const int HeaderLines = 3;
     }
 }

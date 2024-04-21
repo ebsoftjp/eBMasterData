@@ -23,7 +23,6 @@ namespace MasterData
         public void Convert2(string[] names, string[][][] data)
         {
             Debug.Assert(names.Length == data.Length, $"Convert2: {names.Length} != {data.Length}");
-            foreach (var item in data) Debug.Log(item);
             AdrData = ConvertList<DBClassAdrData>("AdrData", names, data);
             StrData = ConvertList<DBClassStrData>("StrData", names, data);
             SprData = ConvertList<DBClassSprData>("SprData", names, data);
@@ -31,7 +30,6 @@ namespace MasterData
 
         private T[] ConvertList<T>(string title, string[] titles, string[][][] data) where T : DBClassBase
         {
-            Debug.Log($"ConvertList: {title} => {System.Array.IndexOf(titles, title)}");
             return data?
                 .ElementAtOrDefault(System.Array.IndexOf(titles, title))?
                 .Select(v => System.Activator.CreateInstance(typeof(T), new object[] { v }) as T)?
