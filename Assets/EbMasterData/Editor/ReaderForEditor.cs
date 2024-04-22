@@ -99,6 +99,9 @@ namespace EbMasterData.Editor
             };
         }
 
+        protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item)
+            => await ReadFromGoogleSpreadSheet(item);
+
         protected override async Task<LoadedText> ReadFromAddressables(LoadData item)
             => await ReadFromFile(item);
 

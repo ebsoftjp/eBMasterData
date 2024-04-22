@@ -1,4 +1,4 @@
-// Auto create by DBClassConvert
+// Auto create by EbMasterData.ConvertClasses
 using System.Linq;
 using UnityEngine;
 
@@ -47,6 +47,30 @@ namespace MasterData
             Id = lines[0];
             Sub1 = lines[1];
             Sub2 = lines[2];
+        }
+    }
+
+    [System.Serializable]
+    public class MDClassSprSub1 : MDClassBase
+    {
+        public string Value; // 
+
+        public MDClassSprSub1(params string[] lines)
+        {
+            Id = lines[0];
+            Value = lines[1];
+        }
+    }
+
+    [System.Serializable]
+    public class MDClassSprSub2 : MDClassBase
+    {
+        public int Value; // Value of data
+
+        public MDClassSprSub2(params string[] lines)
+        {
+            Id = lines[0];
+            Value = int.Parse(lines[1]);
         }
     }
 }

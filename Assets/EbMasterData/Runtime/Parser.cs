@@ -63,7 +63,7 @@ namespace EbMasterData
                     tmp.Clear();
                 }
             }
-            Debug.Assert(tmp.Count == 0 && dqCount % 2 == 0, $"error: {tmp}, {dqCount}");
+            Debug.Assert(tmp.Count == 0 && dqCount % 2 == 0, $"error: {string.Join(",", tmp)}, {dqCount}");
             return res;
         }
 

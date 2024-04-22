@@ -39,3 +39,17 @@ MonoBehaviour:
   - Id: 3
     Sub1: 13
     Sub2: 23
+  SprSub1:
+  - Id: 11
+    Value: 11,0
+  - Id: 12
+    Value: '"120"'
+  - Id: 13
+    Value: 4/5
+  SprSub2:
+  - Id: 21
+    Value: 210
+  - Id: 22
+    Value: 220
+  - Id: 23
+    Value: 230
