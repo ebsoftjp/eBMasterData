@@ -1,19 +1,31 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 using EbMasterData;
 
 public class SampleScript : MonoBehaviour
 {
-    private readonly Core core = new();
+    [Header("Document")]
+    public UIDocument Document;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private Button button;
+    private Label label;
+
     void Start()
     {
-        core.Log();
+        button = Document.rootVisualElement.Q<Button>();
+        label = Document.rootVisualElement.Q<Label>();
+        button.text = "Start";
+        label.text = "Ready";
+
+        button.clicked += Download;
     }
 
-    // Update is called once per frame
-    void Update()
+    private async void Download()
     {
-        
+        button.SetEnabled(false);
+        label.text = "Download";
+
+        var reader = new Reader((_, _, text) => { label.text = text; return false; });
+        await reader.ReadText();
     }
 }
