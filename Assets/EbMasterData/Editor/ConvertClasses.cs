@@ -24,7 +24,7 @@ namespace EbMasterData.Editor
             this.settings = settings;
         }
 
-        public List<string> CreateMasterDataDBClasses(List<Reader.KeysData2> data)
+        public List<string> CreateMasterDataDBClasses(List<ReaderForEditor.KeysData2> data)
         {
             var res = new List<string>
             {
@@ -60,7 +60,7 @@ namespace EbMasterData.Editor
             return res;
         }
 
-        private List<string> CreateClassFileEach1(Reader.KeysData2 data, string[] allClasses)
+        private List<string> CreateClassFileEach1(ReaderForEditor.KeysData2 data, string[] allClasses)
         {
             var keys2 = data.keys.Where(v => v.key != primaryKey).ToArray();
 
@@ -76,7 +76,7 @@ namespace EbMasterData.Editor
             };
 
             // reference
-            var refClasses = new List<Reader.KeysData3>();
+            var refClasses = new List<ReaderForEditor.KeysData3>();
 
             // local functions
             bool isClassType(string v) => allClasses.Contains(v) || allClasses.Contains(v.Replace("[]", ""));

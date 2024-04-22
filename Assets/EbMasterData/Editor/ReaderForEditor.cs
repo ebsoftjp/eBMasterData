@@ -11,39 +11,59 @@ namespace EbMasterData.Editor
 {
     public class ReaderForEditor : Reader
     {
+        public readonly List<KeysData2> data3 = new();
+
+        [System.Serializable]
+        public class KeysData2
+        {
+            public string name;
+            public KeysData3[] keys;
+        }
+
+        [System.Serializable]
+        public class KeysData3
+        {
+            public string key;
+            public string type;
+            public string comment;
+        }
+
         public ReaderForEditor(System.Func<int, int, string, bool> indicatorFunc) : base(indicatorFunc) { }
 
-        public async Task CreateFileList()
+        public void CreateData()
         {
-            foreach (var src in settings.Sources ?? new SettingsDataSource[0])
+            data3.Clear();
+            for (int i = 0; i < data2.Count; i++)
             {
-                Debug.Log($"{src.DataType}, {src.Format}, {src.Path}");
-                var res = src.DataType switch
-                {
-                    DsDataType.CustomAPI => await CreateFileListFromCustomAPI(src),
-                    DsDataType.Addressables => await CreateFileListCommon(src),
-                    DsDataType.StreamingAssets => await CreateFileListCommon(src),
-                    DsDataType.GoogleSpreadSheet => await CreateFileListFromSpreadSheet(src),
-                    _ => null,
-                };
-
-                if (res != null)
-                {
-                    files2.AddRange(res);
-                }
-            }
-
-            for (int i = 0; i < files2.Count; i++)
-            {
-                Debug.Log($"[files2 {i + 1}/{files2.Count}] {files2[i].Path}");
-            }
-            for (int i = 0; i < loadCache.Count; i++)
-            {
-                Debug.Log($"[loadCache {i + 1}/{loadCache.Count}] {loadCache.Keys.ElementAt(i)}");
+                data3.Add(TextToData(data2[i]));
             }
         }
 
-        private async Task<List<LoadData>> CreateFileListCommon(SettingsDataSource src)
+        protected KeysData2 TextToData(LoadedText data)
+        {
+            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
+            parser.IsOutputLog = true;
+            var lines = parser.Exec(data.Text);
+
+            return new()
+            {
+                name = data.Name,
+                keys = Enumerable.Repeat(0, lines?.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
+                {
+                    key = lines?.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
+                    type = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
+                    comment = lines?.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
+                }).ToArray(),
+            };
+        }
+
+        protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateCustomAPI(src);
+        protected override async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListIO(src);
+        protected override async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src) => await CreateFileListIO(src);
+        protected override async Task<List<LoadData>> CreateFileListFromStreamingAssets(SettingsDataSource src) => await CreateFileListIO(src);
+        protected override async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateSpreadSheet(src);
+
+        private async Task<List<LoadData>> CreateFileListIO(SettingsDataSource src)
         {
             await Task.CompletedTask;
             return Directory.GetFiles(src.Path, "*.csv")
@@ -54,7 +74,7 @@ namespace EbMasterData.Editor
                 }).ToList();
         }
 
-        private async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src)
+        private async Task<List<LoadData>> CreateCustomAPI(SettingsDataSource src)
         {
             var dl = new DownloaderText(src.Path, false);
             var text = await dl.Get();
@@ -73,7 +93,7 @@ namespace EbMasterData.Editor
                 .ToList();
         }
 
-        private async Task<List<LoadData>> CreateFileListFromSpreadSheet(SettingsDataSource src)
+        private async Task<List<LoadData>> CreateSpreadSheet(SettingsDataSource src)
         {
             var file = "";
             var dl = new DownloaderText(src.Path, false)
@@ -99,32 +119,9 @@ namespace EbMasterData.Editor
             };
         }
 
-        protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item)
-            => await ReadFromGoogleSpreadSheet(item);
-
-        protected override async Task<LoadedText> ReadFromAddressables(LoadData item)
-            => await ReadFromFile(item);
-
-        protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item)
-            => await ReadFromFile(item);
-
-        protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item)
-        {
-            await Task.CompletedTask;
-            return new()
-            {
-                Name = item.Path,
-                Text = loadCache.GetValueOrDefault(item.Path) ?? "",
-            };
-        }
-
-        //protected override async Task<LoadedText> ReadFromAddressables(SettingsDataSource item)
-        //    => await ReadFromFile(item);
-
-        //protected override async Task<LoadedText> ReadFromStreamingAssets(SettingsDataSource item)
-        //    => await ReadFromFile(item);
-
-        //protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(SettingsDataSource item)
-        //    => await ReadFromFile(item);
+        protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
+        protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromFile(item);
+        protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadFromFile(item);
+        protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadFromCache(item);
     }
 }

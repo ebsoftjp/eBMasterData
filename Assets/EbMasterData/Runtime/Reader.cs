@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace EbMasterData
 {
-    public class Reader
+    public abstract class Reader
     {
         protected readonly Dictionary<string, string> loadCache = new();
 
@@ -36,28 +36,12 @@ namespace EbMasterData
 
         protected readonly List<LoadData> files2 = new();
         public readonly List<LoadedText> data2 = new();
-        public readonly List<KeysData2> data3 = new();
 
         [System.Serializable]
         public class LoadedText
         {
             public string Name;
             public string Text;
-        }
-
-        [System.Serializable]
-        public class KeysData2
-        {
-            public string name;
-            public KeysData3[] keys;
-        }
-
-        [System.Serializable]
-        public class KeysData3
-        {
-            public string key;
-            public string type;
-            public string comment;
         }
 
         public string DBClassesPath => $"{settings.OutputPath}/{settings.ClassesFileName}.cs";
@@ -73,15 +57,47 @@ namespace EbMasterData
             settings = Resources.Load<Settings>(Paths.SettingsPath);
         }
 
+        public async Task CreateFileList()
+        {
+            foreach (var src in settings.Sources ?? new SettingsDataSource[0])
+            {
+                Debug.Log($"{src.DataType}, {src.Format}, {src.Path}");
+                var res = src.DataType switch
+                {
+                    DsDataType.CustomAPI => await CreateFileListFromCustomAPI(src),
+                    DsDataType.Resources => await CreateFileListFromResources(src),
+                    DsDataType.Addressables => await CreateFileListFromAddressables(src),
+                    DsDataType.StreamingAssets => await CreateFileListFromStreamingAssets(src),
+                    DsDataType.GoogleSpreadSheet => await CreateFileListFromGoogleSpreadSheet(src),
+                    _ => null,
+                };
+
+                // exclude null data
+                if (res != null)
+                {
+                    files2.AddRange(res);
+                }
+            }
+
+            for (int i = 0; i < files2.Count; i++)
+            {
+                Debug.Log($"[files2 {i + 1}/{files2.Count}] {files2[i].Path}");
+            }
+            for (int i = 0; i < loadCache.Count; i++)
+            {
+                Debug.Log($"[loadCache {i + 1}/{loadCache.Count}] {loadCache.Keys.ElementAt(i)}");
+            }
+        }
+
         public async Task ReadText()
         {
-            //var data2 = new List<LoadedText>();
             data2.Clear();
             foreach (var item in files2)
             {
                 var res = item.Src.DataType switch
                 {
                     DsDataType.CustomAPI => await ReadFromCustomAPI(item),
+                    DsDataType.Resources => await ReadFromResources(item),
                     DsDataType.Addressables => await ReadFromAddressables(item),
                     DsDataType.StreamingAssets => await ReadFromStreamingAssets(item),
                     DsDataType.GoogleSpreadSheet => await ReadFromGoogleSpreadSheet(item),
@@ -101,85 +117,51 @@ namespace EbMasterData
             }
         }
 
-        public void CreateData()
+        protected async Task<List<LoadData>> CreateFileListDummy(SettingsDataSource _)
         {
-            data3.Clear();
-            for (int i = 0; i < data2.Count; i++)
-            {
-                data3.Add(TextToData(data2[i]));
-            }
-        }
-
-        protected virtual async Task<LoadedText> ReadFromCustomAPI(LoadData item)
-        {
-            var dl = new DownloaderText(item.Path, false);
-            var text = await dl.Get();
+            await Task.CompletedTask;
             return null;
         }
 
-        protected virtual async Task<LoadedText> ReadFromAddressables(LoadData item)
+        protected virtual async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected virtual async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected virtual async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected virtual async Task<List<LoadData>> CreateFileListFromStreamingAssets(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected virtual async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateFileListDummy(src);
+
+        protected async Task<LoadedText> ReadTextDummy(LoadData _)
         {
-            var handle = Addressables.LoadAssetAsync<TextAsset>(item.Path);
-            await handle.Task;
+            await Task.CompletedTask;
+            return null;
+        }
+
+        protected virtual async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadTextDummy(item);
+        protected virtual async Task<LoadedText> ReadFromResources(LoadData item) => await ReadTextDummy(item);
+        protected virtual async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadTextDummy(item);
+        protected virtual async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadTextDummy(item);
+        protected virtual async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadTextDummy(item);
+
+        protected async Task<LoadedText> ReadFromFile(LoadData item)
+        {
+            using var sr = new StreamReader(item.Path);
+            var res = await sr.ReadToEndAsync();
+            sr.Close();
+
+            return new()
+            {
+                Name = PathToTableName(item.Path),
+                Text = res,
+            };
+        }
+
+        protected async Task<LoadedText> ReadFromCache(LoadData item)
+        {
+            await Task.CompletedTask;
 
             return new()
             {
                 Name = item.Path,
-                Text = handle.Result.text,
-            };
-        }
-
-        protected virtual async Task<LoadedText> ReadFromStreamingAssets(LoadData item)
-        {
-            var dl = new DownloaderText(item.Path, true);
-            var text = await dl.Get();
-            return null;
-        }
-
-        protected virtual async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item)
-        {
-            var dl = new DownloaderText(item.Path, false)
-            {
-                ResponseAction = req =>
-                {
-                    var file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
-                        @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
-                },
-            };
-            var text = await dl.Get();
-            return null;
-        }
-
-        protected virtual async Task<LoadedText> ReadFromFile(LoadData item)
-        {
-            using (var sr = new StreamReader(item.Path))
-            {
-                var res = await sr.ReadToEndAsync();
-                sr.Close();
-
-                return new()
-                {
-                    Name = PathToTableName(item.Path),
-                    Text = res,
-                };
-            }
-        }
-
-        protected KeysData2 TextToData(LoadedText data)
-        {
-            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
-            parser.IsOutputLog = true;
-            var lines = parser.Exec(data.Text);
-
-            return new()
-            {
-                name = data.Name,
-                keys = Enumerable.Repeat(0, lines?.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
-                {
-                    key = lines?.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
-                    type = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
-                    comment = lines?.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
-                }).ToArray(),
+                Text = loadCache.GetValueOrDefault(item.Path) ?? "",
             };
         }
 

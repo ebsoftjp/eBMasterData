@@ -15,7 +15,7 @@ namespace EbMasterData.Editor
             this.settings = settings;
         }
 
-        public List<string> CreateMasterDataData(List<Reader.KeysData2> data)
+        public List<string> CreateMasterDataData(List<ReaderForEditor.KeysData2> data)
         {
             var res = new List<string>
             {

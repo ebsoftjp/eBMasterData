@@ -31,14 +31,14 @@ MonoBehaviour:
     Name: Ghi
   SprData:
   - Id: 1
-    Sub1: 11
-    Sub2: 21
+    Sub1Id: 11
+    Sub2Id: 21
   - Id: 2
-    Sub1: 12
-    Sub2: 22
+    Sub1Id: 12
+    Sub2Id: 22
   - Id: 3
-    Sub1: 13
-    Sub2: 23
+    Sub1Id: 13
+    Sub2Id: 23
   SprSub1:
   - Id: 11
     Value: 11,0

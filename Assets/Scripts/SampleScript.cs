@@ -25,7 +25,7 @@ public class SampleScript : MonoBehaviour
         button.SetEnabled(false);
         label.text = "Download";
 
-        var reader = new Reader((_, _, text) => { label.text = text; return false; });
+        var reader = new ReaderForRuntime((_, _, text) => { label.text = text; return false; });
         await reader.ReadText();
     }
 }
