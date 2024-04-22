@@ -75,28 +75,53 @@ namespace EbMasterData.Editor
                 $"    {{",
             };
 
-            res.AddRange(keys2.Select(v => $"        public {v.type} {v.key}; // {v.comment.Replace("\n", "")}"));
-
             // reference
-            var refClasses = keys2
-                .Where(v => Regex.IsMatch(v.key, $"{idSuffix}$"))
-                .ToArray();
+            var refClasses = new List<Reader.KeysData3>();
 
-            if (refClasses.Length > 0)
+            // local functions
+            bool isClassType(string v) => allClasses.Contains(v) || allClasses.Contains(v.Replace("[]", ""));
+            string getRefKey(string v) => $"{v}{settings.ClassPrimaryKey}";
+
+            // base define
+            foreach (var v in keys2)
+            {
+                var type = v.type;
+                var key = v.key;
+                var comment = v.comment.Replace("\n", "");
+                if (comment == "") comment = "(no comment)";
+
+                if (isClassType(type))
+                {
+                    type = "string";
+                    key = getRefKey(key);
+                    refClasses.Add(v);
+                }
+
+                res.Add($"        public {type} {key}; // {comment}");
+            }
+
+            if (refClasses.Count > 0)
             {
                 res.Add($"");
                 res.AddRange(refClasses
                     .SelectMany(v =>
                     {
                         var org = v.key;
-                        var key = Regex.Replace(org, $"{idSuffix}$", "");
-                        var key2 = allClasses.FirstOrDefault(r => r == key)
-                            ?? allClasses.FirstOrDefault(r => Regex.IsMatch(key, $"{r}$")) ?? key;
+                        var key = org;
+                        var pmkey = $"{org}{settings.ClassPrimaryKey}";
+                        var key2 = v.type;
+                        var key3 = v.type.Replace("[]", "");
+                        var table = $"{settings.DataFileName}.Tables.{key3}";
 
-                        var add = new List<string>
+                        var add = new List<string>();
+
+                        if (key2 == key3)
                         {
-                            $"        public {tablePrefix}{key2} {key} => Data.Tables.{key2}.FirstOrDefault(v => v.{primaryKey} == {org});",
-                            $"        public {tablePrefix}{key2}[] {key}Array => Data.Tables.{key2}.Where(v => v.{primaryKey} == {org}).ToArray();",
+                            add.Add($"        public {tablePrefix}{key2} {key} => {table}.FirstOrDefault(v => v.{primaryKey} == {pmkey});");
+                        }
+                        else
+                        {
+                            add.Add($"        public {tablePrefix}{key2} {key} => {table}.Where(v => v.{primaryKey} == {pmkey}).ToArray();");
                         };
 
                         if (vecArray.Contains(key2))
@@ -157,7 +182,12 @@ namespace EbMasterData.Editor
                     "int" => $"int.Parse(lines[{n}])",
                     _ => $"lines[{n}]",
                 };
-                return $"            {v.key} = {parse};";
+                var key = v.key;
+                if (isClassType(v.type))
+                {
+                    key = getRefKey(key);
+                }
+                return $"            {key} = {parse};";
             }));
 
             // end

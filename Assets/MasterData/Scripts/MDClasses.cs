@@ -39,21 +39,24 @@ namespace MasterData
     [System.Serializable]
     public class MDClassSprData : MDClassBase
     {
-        public string Sub1; // Index of Sub1
-        public string Sub2; // Index of Sub2
+        public string Sub1Id; // Index of Sub1
+        public string Sub2Id; // Index of Sub2
+
+        public MDClassSprSub1 Sub1 => MDData.Tables.SprSub1.FirstOrDefault(v => v.Id == Sub1Id);
+        public MDClassSprSub2[] Sub2 => MDData.Tables.SprSub2.Where(v => v.Id == Sub2Id).ToArray();
 
         public MDClassSprData(params string[] lines)
         {
             Id = lines[0];
-            Sub1 = lines[1];
-            Sub2 = lines[2];
+            Sub1Id = lines[1];
+            Sub2Id = lines[2];
         }
     }
 
     [System.Serializable]
     public class MDClassSprSub1 : MDClassBase
     {
-        public string Value; // 
+        public string Value; // Value of",data
 
         public MDClassSprSub1(params string[] lines)
         {
