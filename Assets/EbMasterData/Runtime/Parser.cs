@@ -31,7 +31,7 @@ namespace EbMasterData
 
             var res = MultiItemSplit(src.Split(lineSplit), $"{retCode}")
                 .Select(v => MultiItemSplit(v.Split(fieldSplit), fieldSplit)
-                    .Select(s => s[0] == dqCode && s[^1] == dqCode ? s[1..^1] : s)
+                    .Select(s => s.Length > 1 && s[0] == dqCode && s[^1] == dqCode ? s[1..^1] : s)
                     .Select(s => s.Replace($"{dqCode}{dqCode}", $"{dqCode}"))
                     .ToArray())
                 .ToArray();
