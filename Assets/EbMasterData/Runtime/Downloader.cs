@@ -9,6 +9,8 @@ namespace EbMasterData
 {
     public abstract class Downloader<T>
     {
+        public const string streamingAssetsPath = "Assets/StreamingAssets/";
+
         protected string url;
         protected T res;
         protected string error;
@@ -19,7 +21,7 @@ namespace EbMasterData
 
         public Downloader(string url, bool isLocal)
         {
-            this.url = isLocal ? ToStreamingPath(url) : url;
+            this.url = isLocal ? ToStreamingPathWithFile(url) : url;
             logName = $"{GetType().Name}";
         }
 
@@ -29,7 +31,7 @@ namespace EbMasterData
             Debug.Log($"Destroy {logName}");
         }
 
-        // URLに変換
+        // to URL
         public static string ToStreamingPath(string self)
         {
 #if UNITY_IOS
@@ -39,8 +41,11 @@ namespace EbMasterData
 #else
             var path = Application.streamingAssetsPath;
 #endif
-            return $"file://{path}/{self}";
+            return $"{path}/{self}";
         }
+
+        // to URL
+        public static string ToStreamingPathWithFile(string self) => $"file://{ToStreamingPath(self)}";
 
         public void Cancel()
         {

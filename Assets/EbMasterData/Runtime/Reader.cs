@@ -1,12 +1,8 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEditor;
-//using Newtonsoft.Json;
 
 namespace EbMasterData
 {
@@ -61,7 +57,7 @@ namespace EbMasterData
         {
             foreach (var src in settings.Sources ?? new SettingsDataSource[0])
             {
-                Debug.Log($"{src.DataType}, {src.Format}, {src.Path}");
+                Debug.Log($"{src.DataType}, {src.Path}");
                 var res = src.DataType switch
                 {
                     DsDataType.CustomAPI => await CreateFileListFromCustomAPI(src),
@@ -117,22 +113,61 @@ namespace EbMasterData
             }
         }
 
-        protected async Task<List<LoadData>> CreateFileListDummy(SettingsDataSource _)
-        {
-            await Task.CompletedTask;
-            return null;
-        }
-
         protected virtual async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateFileListDummy(src);
         protected virtual async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListDummy(src);
         protected virtual async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src) => await CreateFileListDummy(src);
         protected virtual async Task<List<LoadData>> CreateFileListFromStreamingAssets(SettingsDataSource src) => await CreateFileListDummy(src);
         protected virtual async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateFileListDummy(src);
 
-        protected async Task<LoadedText> ReadTextDummy(LoadData _)
+        protected async Task<List<LoadData>> CreateFileListDummy(SettingsDataSource _)
         {
             await Task.CompletedTask;
             return null;
+        }
+
+        protected async Task<List<LoadData>> CreateCustomAPI(SettingsDataSource src)
+        {
+            var dl = new DownloaderText(src.Path, false);
+            var text = await dl.Get();
+            Debug.Log(text);
+            var data = JsonUtility.FromJson<CustomAPIData>($"{{\"List\":{text}}}");
+            foreach (var item in data.List)
+            {
+                loadCache[item.Name] = item.Text;
+            }
+            return data.List
+                .Select(v => new LoadData()
+                {
+                    Path = v.Name,
+                    Src = src,
+                })
+                .ToList();
+        }
+
+        protected async Task<List<LoadData>> CreateSpreadSheet(SettingsDataSource src)
+        {
+            var file = "";
+            var dl = new DownloaderText(src.Path, false)
+            {
+                ResponseAction = req =>
+                {
+                    Debug.Log($"ResponseAction");
+                    // Content-Disposition: attachment; filename="EbMasterData-SprData.csv"; filename*=UTF-8''EbMasterData%20-%20SprData.csv
+                    file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
+                        @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
+                    Debug.Log($"\"{file}\"");
+                },
+            };
+            var text = await dl.Get();
+            loadCache[file] = text;
+            return new()
+            {
+                new()
+                {
+                    Path = file,
+                    Src = src,
+                },
+            };
         }
 
         protected virtual async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadTextDummy(item);
@@ -141,17 +176,10 @@ namespace EbMasterData
         protected virtual async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadTextDummy(item);
         protected virtual async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadTextDummy(item);
 
-        protected async Task<LoadedText> ReadFromFile(LoadData item)
+        protected async Task<LoadedText> ReadTextDummy(LoadData _)
         {
-            using var sr = new StreamReader(item.Path);
-            var res = await sr.ReadToEndAsync();
-            sr.Close();
-
-            return new()
-            {
-                Name = PathToTableName(item.Path),
-                Text = res,
-            };
+            await Task.CompletedTask;
+            return null;
         }
 
         protected async Task<LoadedText> ReadFromCache(LoadData item)
@@ -165,7 +193,7 @@ namespace EbMasterData
             };
         }
 
-        private string PathToTableName(string str)
+        protected string PathToTableName(string str)
             => Regex.Match(str, @"([^/]+)\.[a-zA-Z0-9]+$").Groups[1].Value;
     }
 }

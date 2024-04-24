@@ -27,6 +27,8 @@ namespace EbMasterData
         /// </summary>
         public string[][] Exec(string src)
         {
+            if (src == "") return new string[0][];
+
             var res = MultiItemSplit(src.Split(lineSplit), $"{retCode}")
                 .Select(v => MultiItemSplit(v.Split(fieldSplit), fieldSplit)
                     .Select(s => s[0] == dqCode && s[^1] == dqCode ? s[1..^1] : s)

@@ -12,54 +12,67 @@ namespace EbMasterData
 {
     public class ReaderForRuntime : Reader
     {
-        public ReaderForRuntime(System.Func<int, int, string, bool> indicatorFunc) : base(indicatorFunc)
-        {
-        }
+        public ReaderForRuntime(System.Func<int, int, string, bool> indicatorFunc) : base(indicatorFunc) { }
 
-        protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateCustomAPI(src);
+
         protected override async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListDummy(src);
-        protected override async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src) => await CreateFileListDummy(src);
-        protected override async Task<List<LoadData>> CreateFileListFromStreamingAssets(SettingsDataSource src) => await CreateFileListDummy(src);
-        protected override async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateFileListDummy(src);
 
-        protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item)
+        protected override async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src)
         {
-            var dl = new DownloaderText(item.Path, false);
-            var text = await dl.Get();
-            return null;
-        }
-
-        protected override async Task<LoadedText> ReadFromAddressables(LoadData item)
-        {
-            var handle = Addressables.LoadAssetAsync<TextAsset>(item.Path);
+            var handle = Addressables.LoadAssetsAsync<TextAsset>(src.AddressablesLabel, null, true);
             await handle.Task;
 
-            return new()
+            foreach (var item in handle.Result)
             {
-                Name = item.Path,
-                Text = handle.Result.text,
-            };
+                loadCache[item.name] = item.text;
+            }
+
+            return handle.Result
+                .Select(v => new LoadData()
+                {
+                    Src = src,
+                    Path = v.name,
+                })
+                .ToList();
         }
+
+        protected override async Task<List<LoadData>> CreateFileListFromStreamingAssets(SettingsDataSource src)
+        {
+            await Task.CompletedTask;
+            var path1 = src.Path;
+            var path2 = "";
+            if (path1.StartsWith(DownloaderText.streamingAssetsPath))
+            {
+                path2 = path1.Substring(DownloaderText.streamingAssetsPath.Length);
+                path1 = DownloaderText.ToStreamingPath(path2);
+            }
+            return Directory.GetFiles(path1, "*.csv")
+                .Select(v => new LoadData
+                {
+                    Path = path2 + v.Substring(path1.Length),
+                    Src = src,
+                }).ToList();
+        }
+
+        protected override async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateSpreadSheet(src);
+
+        protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
+        protected override async Task<LoadedText> ReadFromResources(LoadData item) => await ReadTextDummy(item);
+        protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromCache(item);
 
         protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item)
         {
             var dl = new DownloaderText(item.Path, true);
             var text = await dl.Get();
-            return null;
+
+            return new()
+            {
+                Name = PathToTableName(item.Path),
+                Text = text,
+            };
         }
 
-        protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item)
-        {
-            var dl = new DownloaderText(item.Path, false)
-            {
-                ResponseAction = req =>
-                {
-                    var file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
-                        @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
-                },
-            };
-            var text = await dl.Get();
-            return null;
-        }
+        protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadFromCache(item);
     }
 }

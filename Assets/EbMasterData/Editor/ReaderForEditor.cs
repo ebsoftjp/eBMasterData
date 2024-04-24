@@ -74,54 +74,22 @@ namespace EbMasterData.Editor
                 }).ToList();
         }
 
-        private async Task<List<LoadData>> CreateCustomAPI(SettingsDataSource src)
-        {
-            var dl = new DownloaderText(src.Path, false);
-            var text = await dl.Get();
-            Debug.Log(text);
-            var data = JsonUtility.FromJson<CustomAPIData>($"{{\"List\":{text}}}");
-            foreach (var item in data.List)
-            {
-                loadCache[item.Name] = item.Text;
-            }
-            return data.List
-                .Select(v => new LoadData()
-                {
-                    Path = v.Name,
-                    Src = src,
-                })
-                .ToList();
-        }
-
-        private async Task<List<LoadData>> CreateSpreadSheet(SettingsDataSource src)
-        {
-            var file = "";
-            var dl = new DownloaderText(src.Path, false)
-            {
-                ResponseAction = req =>
-                {
-                    Debug.Log($"ResponseAction");
-                    // Content-Disposition: attachment; filename="EbMasterData-SprData.csv"; filename*=UTF-8''EbMasterData%20-%20SprData.csv
-                    file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
-                        @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
-                    Debug.Log($"\"{file}\"");
-                },
-            };
-            var text = await dl.Get();
-            loadCache[file] = text;
-            return new()
-            {
-                new()
-                {
-                    Path = file,
-                    Src = src,
-                },
-            };
-        }
-
         protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
         protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadFromCache(item);
+
+        protected async Task<LoadedText> ReadFromFile(LoadData item)
+        {
+            using var sr = new StreamReader(item.Path);
+            var res = await sr.ReadToEndAsync();
+            sr.Close();
+
+            return new()
+            {
+                Name = PathToTableName(item.Path),
+                Text = res,
+            };
+        }
     }
 }

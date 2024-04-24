@@ -18,7 +18,8 @@ MonoBehaviour:
   - m_GUID: 4ebadd7dd986d40d5962160c537b7364
     m_Address: Assets/CSV/AdrData.csv
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - CSV
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3ba765ea671b544c6a133da5527b215b, type: 2}

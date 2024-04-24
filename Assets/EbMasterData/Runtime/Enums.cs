@@ -8,10 +8,4 @@
         StreamingAssets,
         GoogleSpreadSheet,
     }
-
-    public enum DsFormat
-    {
-        CSV,
-        JSON,
-    }
 }
