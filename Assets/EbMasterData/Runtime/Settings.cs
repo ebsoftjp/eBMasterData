@@ -13,11 +13,14 @@ namespace EbMasterData
         [Header("Namespace name")]
         public string NamespaceName = "MasterData";
 
-        [Header("Data file name")]
-        public string DataFileName = "MDData";
-
         [Header("Classes file name")]
         public string ClassesFileName = "MDClasses";
+
+        [Header("Enums file name")]
+        public string EnumsFilePath = "MDEnums";
+
+        [Header("Data file name")]
+        public string DataFileName = "MDData";
 
         [Header("Data line split string")]
         public string LineSplitString = "\\r\\n";
@@ -39,6 +42,9 @@ namespace EbMasterData
 
         [Header("Data sources")]
         public SettingsDataSource[] Sources;
+
+        [Header("Enum list")]
+        public string[] Enums;        
     }
 
     [System.Serializable]

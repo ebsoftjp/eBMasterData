@@ -143,7 +143,7 @@ namespace EbMasterData.Editor
                 res.Add($"");
                 res.AddRange(inhClasses
                     .Select(v => $"        public {tablePrefix}{v}[] {v.Replace(data.name, "")}Array"
-                        + $" => Data.Tables.{v}.Where(v => v.{primaryKey} == {primaryKey}).ToArray();"));
+                        + $" => {settings.DataFileName}.Tables.{v}.Where(v => v.{primaryKey} == {primaryKey}).ToArray();"));
             }
 
             // vector
@@ -180,8 +180,16 @@ namespace EbMasterData.Editor
                 var parse = v.type switch
                 {
                     "int" => $"int.Parse(lines[{n}])",
+                    "bool" => $"bool.Parse(lines[{n}])",
                     _ => $"lines[{n}]",
                 };
+
+                // enum
+                if (settings.Enums.Contains(v.type))
+                {
+                    parse = $"({v.type})System.Enum.Parse(typeof({v.type}), lines[{n}])";
+                }
+
                 var key = v.key;
                 if (isClassType(v.type))
                 {

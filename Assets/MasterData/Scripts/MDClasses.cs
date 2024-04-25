@@ -27,12 +27,12 @@ namespace MasterData
     [System.Serializable]
     public class MDClassStrData : MDClassBase
     {
-        public string Name; // Name of data
+        public StrEnum Name; // Name of data
 
         public MDClassStrData(params string[] lines)
         {
             Id = lines[0];
-            Name = lines[1];
+            Name = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[1]);
         }
     }
 

@@ -84,6 +84,10 @@ namespace EbMasterData.Editor
             var cc = new ConvertClasses(settings);
             WriteFile(cc.CreateMasterDataDBClasses(reader.data3), reader.DBClassesPath);
 
+            // create enums
+            var ce = new ConvertEnums(settings);
+            WriteFile(ce.CreateMasterDataEnums(reader.data3), reader.DBEnumsPath);
+
             // create data
             var cd = new ConvertData(settings);
             WriteFile(cd.CreateMasterDataData(reader.data3), reader.DBDataPath);

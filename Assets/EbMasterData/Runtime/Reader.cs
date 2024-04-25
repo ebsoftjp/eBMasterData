@@ -41,6 +41,7 @@ namespace EbMasterData
         }
 
         public string DBClassesPath => $"{settings.OutputPath}/{settings.ClassesFileName}.cs";
+        public string DBEnumsPath => $"{settings.OutputPath}/{settings.EnumsFilePath}.cs";
         public string DBDataPath => $"{settings.OutputPath}/{settings.DataFileName}.cs";
 
         protected readonly System.Func<int, int, string, bool> indicatorFunc;
