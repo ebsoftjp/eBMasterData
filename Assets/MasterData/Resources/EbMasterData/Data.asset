@@ -22,6 +22,19 @@ MonoBehaviour:
   - Id: Three
     Value: 30
     OrderText: 3rd
+  ResData:
+  - Id: FrameRate
+    Group: Main
+    Type: int
+    Value: 60
+  - Id: Caution
+    Group: Main
+    Type: string
+    Value: 3rd
+  - Id: EnumTest
+    Group: Test
+    Type: StrEnum
+    Value: Jkl
   StrData:
   - Id: 1
     Name: 0

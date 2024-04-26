@@ -1,0 +1,6 @@
+Id,Group,Type,Value
+string,string,string,string
+Id of data,Group name,Type of value,Value
+FrameRate,Main,int,60
+Caution,Main,string,3rd
+EnumTest,Test,StrEnum,Jkl

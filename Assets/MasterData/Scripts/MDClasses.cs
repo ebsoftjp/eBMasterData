@@ -25,6 +25,22 @@ namespace MasterData
     }
 
     [System.Serializable]
+    public class MDClassResData : MDClassBase
+    {
+        public string Group; // Group name
+        public string Type; // Type of value
+        public string Value; // Value
+
+        public MDClassResData(params string[] lines)
+        {
+            Id = lines[0];
+            Group = lines[1];
+            Type = lines[2];
+            Value = lines[3];
+        }
+    }
+
+    [System.Serializable]
     public class MDClassStrData : MDClassBase
     {
         public StrEnum Name; // Name of data

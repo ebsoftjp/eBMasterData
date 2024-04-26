@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OutputPath: Assets/MasterData/Scripts/
   NamespaceName: MasterData
-  DataFileName: MDData
   ClassesFileName: MDClasses
+  EnumsFilePath: MDEnums
+  DataFileName: MDData
   LineSplitString: \r\n
   FieldSplitString: ','
   ClassNamePrefix: MDClass
@@ -26,6 +27,9 @@ MonoBehaviour:
   - DataType: 2
     Path: Assets/CSV
     AddressablesLabel: CSV
+  - DataType: 1
+    Path: Assets/Resources/
+    AddressablesLabel: 
   - DataType: 3
     Path: Assets/StreamingAssets/CSV
     AddressablesLabel: 

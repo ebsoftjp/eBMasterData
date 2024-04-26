@@ -62,6 +62,7 @@ namespace EbMasterData.Editor
         // Read text ================================================================
 
         protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
+        protected override async Task<LoadedText> ReadFromResources(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadFromCache(item);

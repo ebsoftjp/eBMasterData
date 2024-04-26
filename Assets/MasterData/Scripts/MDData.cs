@@ -9,6 +9,7 @@ namespace MasterData
         public static MDData Tables;
 
         public MDClassAdrData[] AdrData;
+        public MDClassResData[] ResData;
         public MDClassStrData[] StrData;
         public MDClassSprData[] SprData;
         public MDClassSprSub1[] SprSub1;
@@ -17,6 +18,7 @@ namespace MasterData
         public MDClassBase[] GetItemsFromTableName(string tableName) => tableName switch
         {
             "AdrData" => AdrData,
+            "ResData" => ResData,
             "StrData" => StrData,
             "SprData" => SprData,
             "SprSub1" => SprSub1,
@@ -28,6 +30,7 @@ namespace MasterData
         {
             Debug.Assert(names.Length == data.Length, $"Convert2: {names.Length} != {data.Length}");
             AdrData = ConvertList<MDClassAdrData>("AdrData", names, data);
+            ResData = ConvertList<MDClassResData>("ResData", names, data);
             StrData = ConvertList<MDClassStrData>("StrData", names, data);
             SprData = ConvertList<MDClassSprData>("SprData", names, data);
             SprSub1 = ConvertList<MDClassSprSub1>("SprSub1", names, data);

@@ -20,7 +20,24 @@ namespace EbMasterData
 
         protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateCustomAPI(src);
 
-        protected override async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListDummy(src);
+        protected override async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src)
+        {
+            await Task.CompletedTask;
+            var texts = Resources.LoadAll<TextAsset>(src.Path);
+
+            foreach (var item in texts)
+            {
+                loadCache[item.name] = item.text;
+            }
+
+            return texts
+                .Select(v => new LoadData()
+                {
+                    Src = src,
+                    Path = v.name,
+                })
+                .ToList();
+        }
 
         protected override async Task<List<LoadData>> CreateFileListFromAddressables(SettingsDataSource src)
         {
@@ -64,7 +81,7 @@ namespace EbMasterData
         // Read text ================================================================
 
         protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
-        protected override async Task<LoadedText> ReadFromResources(LoadData item) => await ReadTextDummy(item);
+        protected override async Task<LoadedText> ReadFromResources(LoadData item) => await ReadFromCache(item);
         protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromCache(item);
 
         protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item)
