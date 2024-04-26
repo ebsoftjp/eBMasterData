@@ -24,11 +24,11 @@ MonoBehaviour:
     OrderText: 3rd
   StrData:
   - Id: 1
-    Name: Abc
+    Name: 0
   - Id: 2
-    Name: Def
+    Name: 1
   - Id: 3
-    Name: Ghi
+    Name: 2
   SprData:
   - Id: 1
     Sub1Id: 11

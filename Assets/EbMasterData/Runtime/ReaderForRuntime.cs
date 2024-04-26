@@ -12,7 +12,11 @@ namespace EbMasterData
 {
     public class ReaderForRuntime : Reader
     {
+        // Constructor ================================================================
+
         public ReaderForRuntime(System.Func<int, int, string, bool> indicatorFunc) : base(indicatorFunc) { }
+
+        // File list ================================================================
 
         protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateCustomAPI(src);
 
@@ -56,6 +60,8 @@ namespace EbMasterData
         }
 
         protected override async Task<List<LoadData>> CreateFileListFromGoogleSpreadSheet(SettingsDataSource src) => await CreateSpreadSheet(src);
+
+        // Read text ================================================================
 
         protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
         protected override async Task<LoadedText> ReadFromResources(LoadData item) => await ReadTextDummy(item);

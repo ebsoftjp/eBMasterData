@@ -3,5 +3,8 @@ namespace MasterData
 {
     public enum StrEnum
     {
+        Abc,
+        Def,
+        Ghi,
     }
 }

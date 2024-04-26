@@ -12,6 +12,7 @@ namespace EbMasterData.Editor
     public class ReaderForEditor : Reader
     {
         public readonly List<KeysData2> data3 = new();
+        public readonly List<EnumData> data4 = new();
 
         [System.Serializable]
         public class KeysData2
@@ -28,34 +29,18 @@ namespace EbMasterData.Editor
             public string comment;
         }
 
+        [System.Serializable]
+        public class EnumData
+        {
+            public string name;
+            public string[] values;
+        }
+
+        // Constructor ================================================================
+
         public ReaderForEditor(System.Func<int, int, string, bool> indicatorFunc) : base(indicatorFunc) { }
 
-        public void CreateData()
-        {
-            data3.Clear();
-            for (int i = 0; i < data2.Count; i++)
-            {
-                data3.Add(TextToData(data2[i]));
-            }
-        }
-
-        protected KeysData2 TextToData(LoadedText data)
-        {
-            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
-            parser.IsOutputLog = true;
-            var lines = parser.Exec(data.Text);
-
-            return new()
-            {
-                name = data.Name,
-                keys = Enumerable.Repeat(0, lines?.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
-                {
-                    key = lines?.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
-                    type = lines?.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
-                    comment = lines?.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
-                }).ToArray(),
-            };
-        }
+        // File list ================================================================
 
         protected override async Task<List<LoadData>> CreateFileListFromCustomAPI(SettingsDataSource src) => await CreateCustomAPI(src);
         protected override async Task<List<LoadData>> CreateFileListFromResources(SettingsDataSource src) => await CreateFileListIO(src);
@@ -74,6 +59,8 @@ namespace EbMasterData.Editor
                 }).ToList();
         }
 
+        // Read text ================================================================
+
         protected override async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadFromCache(item);
         protected override async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadFromFile(item);
         protected override async Task<LoadedText> ReadFromStreamingAssets(LoadData item) => await ReadFromFile(item);
@@ -89,6 +76,56 @@ namespace EbMasterData.Editor
             {
                 Name = PathToTableName(item.Path),
                 Text = res,
+            };
+        }
+
+        // Create header data ================================================================
+
+        public void CreateHeaderData()
+        {
+            data3.Clear();
+            var tables = ParsedTables;
+            var values1 = ParsedValuesWithHeader;
+            for (int i = 0; i < tables.Length; i++)
+            {
+                data3.Add(TextToData(tables[i], values1[i]));
+            }
+
+            data4.Clear();
+            var values2 = ParsedValues;
+            for (int i = 0; i < settings.Enums.Length; i++)
+            {
+                var enumName = settings.Enums[i];
+                var enumValues = new List<string>();
+
+                for (int j = 0; j < tables.Length; j++)
+                {
+                    var keyIndex = System.Array.IndexOf(values1[j].ElementAtOrDefault(1), enumName);
+                    if (keyIndex > -1)
+                    {
+                        enumValues.AddRange(values2[j].Select(v => v[keyIndex]));
+                    }
+                }
+
+                data4.Add(new()
+                {
+                    name = enumName,
+                    values = enumValues.OrderBy(v => v).Distinct().ToArray(),
+                });
+            }
+        }
+
+        protected KeysData2 TextToData(string tableName, string[][] lines)
+        {
+            return new()
+            {
+                name = tableName,
+                keys = Enumerable.Repeat(0, lines.FirstOrDefault()?.Count() ?? 0).Select((_, n) => new KeysData3()
+                {
+                    key = lines.ElementAtOrDefault(0)?.ElementAtOrDefault(n) ?? "",
+                    type = lines.ElementAtOrDefault(1)?.ElementAtOrDefault(n) ?? "",
+                    comment = lines.ElementAtOrDefault(2)?.ElementAtOrDefault(n) ?? "",
+                }).ToArray(),
             };
         }
     }

@@ -77,8 +77,8 @@ namespace EbMasterData.Editor
 
             await reader.CreateFileList();
             await reader.ReadText();
-            reader.CreateData();
-            EditorUtility.ClearProgressBar();
+            reader.ParseData();
+            reader.CreateHeaderData();
 
             // create classes
             var cc = new ConvertClasses(settings);
@@ -86,13 +86,14 @@ namespace EbMasterData.Editor
 
             // create enums
             var ce = new ConvertEnums(settings);
-            WriteFile(ce.CreateMasterDataEnums(reader.data3), reader.DBEnumsPath);
+            WriteFile(ce.CreateMasterDataEnums(reader.data4), reader.DBEnumsPath);
 
             // create data
             var cd = new ConvertData(settings);
             WriteFile(cd.CreateMasterDataData(reader.data3), reader.DBDataPath);
 
             Save();
+            EditorUtility.ClearProgressBar();
         }
 
         public async void DumpData()
@@ -102,22 +103,15 @@ namespace EbMasterData.Editor
 
             await reader.CreateFileList();
             await reader.ReadText();
-            EditorUtility.ClearProgressBar();
-
-            // parser
-            var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
+            reader.ParseData();
 
             // create data
             var obj = ScriptableObject.CreateInstance($"{settings.NamespaceName}.{settings.DataFileName}");
-            obj.GetType().GetMethod("Convert2").Invoke(obj,
-                new object[]
-                {
-                    reader.data2.Select(v => v.Name).ToArray(),
-                    reader.data2.Select(v => parser.Exec(v.Text).Skip(settings.HeaderLines).ToArray()).ToArray(),
-                });
+            obj.GetType().GetMethod("Convert2").Invoke(obj, new object[] { reader.ParsedTables, reader.ParsedValues } );
             AssetDatabase.CreateAsset(obj, Paths.DataFullPath);
 
             Save();
+            EditorUtility.ClearProgressBar();
         }
 
         //private void CreateDBConfig()

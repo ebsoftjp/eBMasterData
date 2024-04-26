@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace EbMasterData.Editor
 {
@@ -11,7 +12,7 @@ namespace EbMasterData.Editor
             this.settings = settings;
         }
 
-        public List<string> CreateMasterDataEnums(List<ReaderForEditor.KeysData2> data)
+        public List<string> CreateMasterDataEnums(List<ReaderForEditor.EnumData> enumData)
         {
             var res = new List<string>
             {
@@ -20,12 +21,18 @@ namespace EbMasterData.Editor
                 $"{{",
             };
 
-            foreach (var v in settings.Enums)
+            foreach (var v in enumData)
             {
                 res.AddRange(new List<string>
                 {
-                    $"    public enum {v}",
+                    $"    public enum {v.name}",
                     $"    {{",
+                });
+
+                res.AddRange(v.values.Select(v => $"        {v},"));
+
+                res.AddRange(new List<string>
+                {
                     $"    }}",
                 });
             }

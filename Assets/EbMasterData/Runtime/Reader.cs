@@ -32,6 +32,7 @@ namespace EbMasterData
 
         protected readonly List<LoadData> files2 = new();
         public readonly List<LoadedText> data2 = new();
+        public readonly List<string[][]> parsedValues = new();
 
         [System.Serializable]
         public class LoadedText
@@ -46,13 +47,20 @@ namespace EbMasterData
 
         protected readonly System.Func<int, int, string, bool> indicatorFunc;
         protected readonly Settings settings;
+        protected readonly Parser parser;
         protected readonly Dictionary<string, string> tmpTextList = new();
+
+        // Constructor ================================================================
 
         public Reader(System.Func<int, int, string, bool> indicatorFunc)
         {
             this.indicatorFunc = indicatorFunc;
             settings = Resources.Load<Settings>(Paths.SettingsPath);
+            parser = new(settings.LineSplitString, settings.FieldSplitString);
+            parser.IsOutputLog = true;
         }
+
+        // File list ================================================================
 
         public async Task CreateFileList()
         {
@@ -83,34 +91,6 @@ namespace EbMasterData
             for (int i = 0; i < loadCache.Count; i++)
             {
                 Debug.Log($"[loadCache {i + 1}/{loadCache.Count}] {loadCache.Keys.ElementAt(i)}");
-            }
-        }
-
-        public async Task ReadText()
-        {
-            data2.Clear();
-            foreach (var item in files2)
-            {
-                var res = item.Src.DataType switch
-                {
-                    DsDataType.CustomAPI => await ReadFromCustomAPI(item),
-                    DsDataType.Resources => await ReadFromResources(item),
-                    DsDataType.Addressables => await ReadFromAddressables(item),
-                    DsDataType.StreamingAssets => await ReadFromStreamingAssets(item),
-                    DsDataType.GoogleSpreadSheet => await ReadFromGoogleSpreadSheet(item),
-                    _ => null,
-                };
-
-                // exclude null data
-                if (res != null)
-                {
-                    data2.Add(res);
-                }
-            }
-
-            for (int i = 0; i < data2.Count; i++)
-            {
-                Debug.Log($"[Read {i + 1}/{data2.Count}] {data2[i].Name}\n{data2[i].Text}");
             }
         }
 
@@ -171,6 +151,36 @@ namespace EbMasterData
             };
         }
 
+        // Read text ================================================================
+
+        public async Task ReadText()
+        {
+            data2.Clear();
+            foreach (var item in files2)
+            {
+                var res = item.Src.DataType switch
+                {
+                    DsDataType.CustomAPI => await ReadFromCustomAPI(item),
+                    DsDataType.Resources => await ReadFromResources(item),
+                    DsDataType.Addressables => await ReadFromAddressables(item),
+                    DsDataType.StreamingAssets => await ReadFromStreamingAssets(item),
+                    DsDataType.GoogleSpreadSheet => await ReadFromGoogleSpreadSheet(item),
+                    _ => null,
+                };
+
+                // exclude null data
+                if (res != null)
+                {
+                    data2.Add(res);
+                }
+            }
+
+            for (int i = 0; i < data2.Count; i++)
+            {
+                Debug.Log($"[Read {i + 1}/{data2.Count}] {data2[i].Name}\n{data2[i].Text}");
+            }
+        }
+
         protected virtual async Task<LoadedText> ReadFromCustomAPI(LoadData item) => await ReadTextDummy(item);
         protected virtual async Task<LoadedText> ReadFromResources(LoadData item) => await ReadTextDummy(item);
         protected virtual async Task<LoadedText> ReadFromAddressables(LoadData item) => await ReadTextDummy(item);
@@ -193,6 +203,25 @@ namespace EbMasterData
                 Text = loadCache.GetValueOrDefault(item.Path) ?? "",
             };
         }
+
+        // Parse data ================================================================
+
+        public void ParseData()
+        {
+            parsedValues.Clear();
+            foreach (var v in data2)
+            {
+                parsedValues.Add(parser.Exec(v.Text));
+            }
+        }
+
+        // Convert args ================================================================
+
+        public string[] ParsedTables => data2.Select(v => v.Name).ToArray();
+        public string[][][] ParsedValuesWithHeader => parsedValues.ToArray();
+        public string[][][] ParsedValues => parsedValues.Select(v => v.Skip(settings.HeaderLines).ToArray()).ToArray();
+
+        // Etc ================================================================
 
         protected string PathToTableName(string str)
             => Regex.Match(str, @"([^/]+)\.[a-zA-Z0-9]+$").Groups[1].Value;
