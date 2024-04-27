@@ -56,9 +56,12 @@ namespace EbMasterData
 
         public async Task CreateFileList()
         {
-            foreach (var src in settings.Sources ?? new SettingsDataSource[0])
+            var max = settings.Sources.Length;
+            for (int i = 0; i < max; i++)
             {
-                Debug.Log($"{src.DataType}, {src.Path}");
+                var src = settings.Sources[i];
+                if (indicatorFunc?.Invoke(i, max, $"{src.DataType}: {src.Path}") ?? false) break;
+
                 var res = src.DataType switch
                 {
                     DsDataType.CustomAPI => await CreateFileListFromCustomAPI(src),
@@ -148,8 +151,12 @@ namespace EbMasterData
         public async Task ReadText()
         {
             loadedTexts.Clear();
-            foreach (var item in dataForLoad)
+            var max = dataForLoad.Count;
+            for (int i = 0; i < max; i++)
             {
+                var item = dataForLoad[i];
+                if (indicatorFunc?.Invoke(i, max, $"{item.Src.DataType}: {item.Path}") ?? false) break;
+
                 var res = item.Src.DataType switch
                 {
                     DsDataType.CustomAPI => await ReadFromCustomAPI(item),

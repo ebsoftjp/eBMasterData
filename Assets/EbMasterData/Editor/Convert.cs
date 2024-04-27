@@ -30,8 +30,8 @@ namespace EbMasterData.Editor
         {
             var isCancel = EditorUtility.DisplayCancelableProgressBar(
                 text,
-                $"{cur + 1}/{max} {text}",
-                (float)(cur + 1) / (float)max);
+                $"[{cur + 1}/{max}] {text}",
+                (float)(cur + 0) / (float)max);
             return isCancel;
         }
 
