@@ -10,6 +10,9 @@ namespace EbMasterData
         [Header("Output path for Scripts")]
         public string OutputPath = "Assets/MasterData/Scripts/";
 
+        [Header("Base file name")]
+        public string BaseFileName = "MD";
+
         [Header("Namespace name")]
         public string NamespaceName = "MasterData";
 

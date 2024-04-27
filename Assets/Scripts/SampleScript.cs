@@ -29,13 +29,11 @@ public class SampleScript : MonoBehaviour
         label.text = "Download";
 
         var settings = Resources.Load<Settings>(Paths.SettingsPath);
-        var parser = new Parser(settings.LineSplitString, settings.FieldSplitString);
         var reader = new ReaderForRuntime((_, _, text) => { label.text = text; return false; });
         await reader.CreateFileList();
         await reader.ReadText();
-        data.Convert2(
-            reader.loadedTexts.Select(v => v.Name).ToArray(),
-            reader.loadedTexts.Select(v => parser.Exec(v.Text).Skip(settings.HeaderLines).ToArray()).ToArray());
+        reader.ParseData();
+        data.Convert2(reader.ParsedTables, reader.ParsedValues);
         label.text = "Done";
     }
 }

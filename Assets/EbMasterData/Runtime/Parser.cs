@@ -44,12 +44,18 @@ namespace EbMasterData
                         .Select(v => v.Replace($"{retCode}", "\\n"))))));
             }
 
-            // replace columns and rows
+            // exchange row and columns
             if (format == 1 && res.Length > 0)
             {
                 var rows = Enumerable.Repeat(0, res.Length).Select((_, n) => n);
                 var cols = Enumerable.Repeat(0, res[0].Length).Select((_, n) => n);
                 res = cols.Select(col => rows.Select(row => res[row][col]).ToArray()).ToArray();
+
+                // merge row 0 and 1
+                res[0] = res[0].Select((v, n) => $"{v}_{res[1][n]}").ToArray();
+
+                // skip row 1
+                res = res.Take(1).Concat(res.Skip(2)).ToArray();
             }
 
             return res;

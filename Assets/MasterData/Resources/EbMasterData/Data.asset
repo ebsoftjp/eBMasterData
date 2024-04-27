@@ -23,18 +23,10 @@ MonoBehaviour:
     Value: 30
     OrderText: 3rd
   ResData:
-  - Id: FrameRate
-    Group: Main
-    Type: int
-    Value: 60
-  - Id: Caution
-    Group: Main
-    Type: string
-    Value: 3rd
-  - Id: EnumTest
-    Group: Test
-    Type: StrEnum
-    Value: Jkl
+  - Id: 
+    Main_FrameRate: 60
+    Main_Caution: This is caution message.
+    Test_EnumTest: 3
   StrData:
   - Id: 1
     Name: 0

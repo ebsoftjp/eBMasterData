@@ -33,6 +33,12 @@ MonoBehaviour:
   - DataType: 3
     Path: Assets/StreamingAssets/CSV
     AddressablesLabel: 
+  - DataType: 4
+    Path: https://docs.google.com/spreadsheets/d/e/2PACX-1vRyYLWGxNR0Amv99WYJncKBbzxO6HyXGbpWC1weuWruRL5to-dSduDOXMIQXs5ziVqIZY36HwadX8da/pub?gid=0&single=true&output=csv
+    AddressablesLabel: 
+  - DataType: 0
+    Path: https://script.google.com/macros/s/AKfycbzDRpnpHuIidXTMcNBZt1BkTi_mbhOh9TJZGdugK47jiK1wtNEwlHuaktipmyM60Y7A/exec
+    AddressablesLabel: 
   Enums:
   - StrEnum
   Configs:

@@ -80,6 +80,10 @@ namespace EbMasterData.Editor
             reader.ParseData();
             reader.CreateHeaderData();
 
+            // create base
+            var cb = new ConvertBase(settings);
+            WriteFile(cb.Create(reader.data3), reader.DBBasePath);
+
             // create classes
             var cc = new ConvertClasses(settings);
             WriteFile(cc.CreateMasterDataDBClasses(reader.data3), reader.DBClassesPath);

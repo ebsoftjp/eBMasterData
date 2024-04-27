@@ -34,6 +34,7 @@ namespace EbMasterData
         public readonly List<LoadedText> loadedTexts = new();
         public readonly List<string[][]> parsedValues = new();
 
+        public string DBBasePath => $"{settings.OutputPath}/{settings.BaseFileName}.cs";
         public string DBClassesPath => $"{settings.OutputPath}/{settings.ClassesFileName}.cs";
         public string DBEnumsPath => $"{settings.OutputPath}/{settings.EnumsFilePath}.cs";
         public string DBDataPath => $"{settings.OutputPath}/{settings.DataFileName}.cs";
@@ -49,7 +50,6 @@ namespace EbMasterData
             this.indicatorFunc = indicatorFunc;
             settings = Resources.Load<Settings>(Paths.SettingsPath);
             parser = new(settings.LineSplitString, settings.FieldSplitString);
-            parser.IsOutputLog = true;
         }
 
         // File list ================================================================

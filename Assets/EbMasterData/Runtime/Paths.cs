@@ -8,7 +8,8 @@ namespace EbMasterData
 
         public const string SettingsPath = "EbMasterData/Settings";
         public static string SettingsFullPath => $"{BasePath}/Resources/{SettingsPath}.asset";
-        public static string DataFullPath => $"{BasePath}/Resources/EbMasterData/Data.asset";
+        public static string DataPath => $"EbMasterData/Data";
+        public static string DataFullPath => $"{BasePath}/Resources/{DataPath}.asset";
         public static string AsmFullPath => $"{BasePath}/{NameSpace}.asmdef";
     }
 }

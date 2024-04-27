@@ -27,15 +27,15 @@ namespace MasterData
     [System.Serializable]
     public class MDClassResData : MDClassBase
     {
-        public int FrameRate; // Frame rate
-        public string Caution; // Caution message
-        public StrEnum EnumTest; // Enum test value
+        public int Main_FrameRate; // Frame rate
+        public string Main_Caution; // Caution message
+        public StrEnum Test_EnumTest; // Enum test value
 
         public MDClassResData(params string[] lines)
         {
-            FrameRate = int.Parse(lines[0]);
-            Caution = lines[1];
-            EnumTest = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[2]);
+            Main_FrameRate = int.Parse(lines[0]);
+            Main_Caution = lines[1];
+            Test_EnumTest = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[2]);
         }
     }
 
@@ -48,6 +48,47 @@ namespace MasterData
         {
             Id = lines[0];
             Name = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[1]);
+        }
+    }
+
+    [System.Serializable]
+    public class MDClassSprData : MDClassBase
+    {
+        public string Sub1Id; // Index of Sub1
+        public string Sub2Id; // Index of Sub2
+
+        public MDClassSprSub1 Sub1 => MDData.Tables.SprSub1.FirstOrDefault(v => v.Id == Sub1Id);
+        public MDClassSprSub2[] Sub2 => MDData.Tables.SprSub2.Where(v => v.Id == Sub2Id).ToArray();
+
+        public MDClassSprData(params string[] lines)
+        {
+            Id = lines[0];
+            Sub1Id = lines[1];
+            Sub2Id = lines[2];
+        }
+    }
+
+    [System.Serializable]
+    public class MDClassSprSub1 : MDClassBase
+    {
+        public string Value; // Value of",data
+
+        public MDClassSprSub1(params string[] lines)
+        {
+            Id = lines[0];
+            Value = lines[1];
+        }
+    }
+
+    [System.Serializable]
+    public class MDClassSprSub2 : MDClassBase
+    {
+        public int Value; // Value of data
+
+        public MDClassSprSub2(params string[] lines)
+        {
+            Id = lines[0];
+            Value = int.Parse(lines[1]);
         }
     }
 }
