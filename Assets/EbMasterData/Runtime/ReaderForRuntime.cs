@@ -89,11 +89,10 @@ namespace EbMasterData
             var dl = new DownloaderText(item.Path, true);
             var text = await dl.Get();
 
-            return new()
-            {
-                Name = PathToTableName(item.Path),
-                Text = text,
-            };
+            return new(
+                PathToTableName(item.Path),
+                text,
+                settings);
         }
 
         protected override async Task<LoadedText> ReadFromGoogleSpreadSheet(LoadData item) => await ReadFromCache(item);

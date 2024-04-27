@@ -25,7 +25,7 @@ namespace EbMasterData
         /// <summary>
         /// Convert text to data
         /// </summary>
-        public string[][] Exec(string src)
+        public string[][] Exec(string src, int format = 0)
         {
             if (src == "") return new string[0][];
 
@@ -42,6 +42,14 @@ namespace EbMasterData
                     retCode,
                     res.Select(line => string.Join(fieldSplit, line
                         .Select(v => v.Replace($"{retCode}", "\\n"))))));
+            }
+
+            // replace columns and rows
+            if (format == 1 && res.Length > 0)
+            {
+                var rows = Enumerable.Repeat(0, res.Length).Select((_, n) => n);
+                var cols = Enumerable.Repeat(0, res[0].Length).Select((_, n) => n);
+                res = cols.Select(col => rows.Select(row => res[row][col]).ToArray()).ToArray();
             }
 
             return res;

@@ -34,8 +34,8 @@ public class SampleScript : MonoBehaviour
         await reader.CreateFileList();
         await reader.ReadText();
         data.Convert2(
-            reader.data2.Select(v => v.Name).ToArray(),
-            reader.data2.Select(v => parser.Exec(v.Text).Skip(settings.HeaderLines).ToArray()).ToArray());
+            reader.loadedTexts.Select(v => v.Name).ToArray(),
+            reader.loadedTexts.Select(v => parser.Exec(v.Text).Skip(settings.HeaderLines).ToArray()).ToArray());
         label.text = "Done";
     }
 }

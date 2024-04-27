@@ -44,7 +44,10 @@ namespace EbMasterData
         public SettingsDataSource[] Sources;
 
         [Header("Enum list")]
-        public string[] Enums;        
+        public string[] Enums;
+
+        [Header("Config list")]
+        public string[] Configs;
     }
 
     [System.Serializable]

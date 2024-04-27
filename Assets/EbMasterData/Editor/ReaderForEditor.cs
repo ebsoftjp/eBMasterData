@@ -73,11 +73,10 @@ namespace EbMasterData.Editor
             var res = await sr.ReadToEndAsync();
             sr.Close();
 
-            return new()
-            {
-                Name = PathToTableName(item.Path),
-                Text = res,
-            };
+            return new(
+                PathToTableName(item.Path),
+                res,
+                settings);
         }
 
         // Create header data ================================================================

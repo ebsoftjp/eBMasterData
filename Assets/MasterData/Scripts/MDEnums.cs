@@ -6,5 +6,6 @@ namespace MasterData
         Abc,
         Def,
         Ghi,
+        Jkl,
     }
 }

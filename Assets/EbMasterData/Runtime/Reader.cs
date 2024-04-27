@@ -30,16 +30,9 @@ namespace EbMasterData
             public string Text;
         }
 
-        protected readonly List<LoadData> files2 = new();
-        public readonly List<LoadedText> data2 = new();
+        protected readonly List<LoadData> dataForLoad = new();
+        public readonly List<LoadedText> loadedTexts = new();
         public readonly List<string[][]> parsedValues = new();
-
-        [System.Serializable]
-        public class LoadedText
-        {
-            public string Name;
-            public string Text;
-        }
 
         public string DBClassesPath => $"{settings.OutputPath}/{settings.ClassesFileName}.cs";
         public string DBEnumsPath => $"{settings.OutputPath}/{settings.EnumsFilePath}.cs";
@@ -48,7 +41,6 @@ namespace EbMasterData
         protected readonly System.Func<int, int, string, bool> indicatorFunc;
         protected readonly Settings settings;
         protected readonly Parser parser;
-        protected readonly Dictionary<string, string> tmpTextList = new();
 
         // Constructor ================================================================
 
@@ -80,13 +72,13 @@ namespace EbMasterData
                 // exclude null data
                 if (res != null)
                 {
-                    files2.AddRange(res);
+                    dataForLoad.AddRange(res);
                 }
             }
 
-            for (int i = 0; i < files2.Count; i++)
+            for (int i = 0; i < dataForLoad.Count; i++)
             {
-                Debug.Log($"[files2 {i + 1}/{files2.Count}] {files2[i].Path}");
+                Debug.Log($"[files2 {i + 1}/{dataForLoad.Count}] {dataForLoad[i].Path}");
             }
             for (int i = 0; i < loadCache.Count; i++)
             {
@@ -155,8 +147,8 @@ namespace EbMasterData
 
         public async Task ReadText()
         {
-            data2.Clear();
-            foreach (var item in files2)
+            loadedTexts.Clear();
+            foreach (var item in dataForLoad)
             {
                 var res = item.Src.DataType switch
                 {
@@ -171,13 +163,13 @@ namespace EbMasterData
                 // exclude null data
                 if (res != null)
                 {
-                    data2.Add(res);
+                    loadedTexts.Add(res);
                 }
             }
 
-            for (int i = 0; i < data2.Count; i++)
+            for (int i = 0; i < loadedTexts.Count; i++)
             {
-                Debug.Log($"[Read {i + 1}/{data2.Count}] {data2[i].Name}\n{data2[i].Text}");
+                Debug.Log($"[Read {i + 1}/{loadedTexts.Count}] {loadedTexts[i].Name}\n{loadedTexts[i].Text}");
             }
         }
 
@@ -197,11 +189,10 @@ namespace EbMasterData
         {
             await Task.CompletedTask;
 
-            return new()
-            {
-                Name = item.Path,
-                Text = loadCache.GetValueOrDefault(item.Path) ?? "",
-            };
+            return new(
+                item.Path,
+                loadCache.GetValueOrDefault(item.Path) ?? "",
+                settings);
         }
 
         // Parse data ================================================================
@@ -209,15 +200,15 @@ namespace EbMasterData
         public void ParseData()
         {
             parsedValues.Clear();
-            foreach (var v in data2)
+            foreach (var v in loadedTexts)
             {
-                parsedValues.Add(parser.Exec(v.Text));
+                parsedValues.Add(parser.Exec(v.Text, v.Format));
             }
         }
 
         // Convert args ================================================================
 
-        public string[] ParsedTables => data2.Select(v => v.Name).ToArray();
+        public string[] ParsedTables => loadedTexts.Select(v => v.Name).ToArray();
         public string[][][] ParsedValuesWithHeader => parsedValues.ToArray();
         public string[][][] ParsedValues => parsedValues.Select(v => v.Skip(settings.HeaderLines).ToArray()).ToArray();
 
