@@ -1,7 +1,9 @@
 // Auto create by EbMasterData.ConvertBase
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class MD
+public static class MD
 {
     private const string resourcePath = "EbMasterData/Data";
 
@@ -30,4 +32,7 @@ public class MD
             public static MasterData.StrEnum EnumTest => Tables.ResData[0].Test_EnumTest;
         }
     }
+
+    public static T At<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.FirstOrDefault(v => v.Id == key);
+    public static T[] ArrayAt<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.Where(v => v.Id == key).ToArray();
 }

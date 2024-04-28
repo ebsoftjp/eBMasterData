@@ -26,6 +26,8 @@ MonoBehaviour:
   - Id: 
     Main_FrameRate: 60
     Main_Caution: This is caution message.
+    Main_Center1: {x: 1, y: 2, z: 3}
+    Main_Center2: {x: 1, y: 2, z: 3}
     Test_EnumTest: 3
   StrData:
   - Id: 1

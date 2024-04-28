@@ -15,12 +15,15 @@ namespace EbMasterData.Editor
         public List<string> Create(List<ReaderForEditor.KeysData2> data)
         {
             var mdClass = $"{settings.NamespaceName}.{settings.DataFileName}";
+            var mdBaseClass = $"{settings.NamespaceName}.{settings.ClassNamePrefix}{settings.ClassNameBase}";
             var res = new List<string>
             {
                 $"// Auto create by EbMasterData.ConvertBase",
+                $"using System.Collections.Generic;",
+                $"using System.Linq;",
                 $"using UnityEngine;",
                 $"",
-                $"public class {settings.BaseFileName}",
+                $"public static class {settings.BaseFileName}",
                 $"{{",
                 $"    private const string resourcePath = \"{Paths.DataPath}\";",
                 $"",
@@ -76,6 +79,9 @@ namespace EbMasterData.Editor
             res.AddRange(new List<string>
             {
                 $"    }}",
+                $"",
+                $"    public static T At<T>(this IList<T> self, string key) where T : {mdBaseClass} => self.FirstOrDefault(v => v.Id == key);",
+                $"    public static T[] ArrayAt<T>(this IList<T> self, string key) where T : {mdBaseClass} => self.Where(v => v.Id == key).ToArray();",
                 $"}}",
                 $"",
             });
