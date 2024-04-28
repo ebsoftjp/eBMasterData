@@ -21,8 +21,11 @@ namespace EbMasterData.Editor
                 $"{{",
             };
 
-            foreach (var v in enumData)
+            for (int i = 0; i < enumData.Count; i++)
             {
+                if (i > 0) res.Add("");
+
+                var v = enumData[i];
                 res.AddRange(new List<string>
                 {
                     $"    public enum {v.name}",
