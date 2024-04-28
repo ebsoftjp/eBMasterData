@@ -21,6 +21,8 @@ public class MD
         {
             public static int FrameRate => Tables.ResData[0].Main_FrameRate;
             public static string Caution => Tables.ResData[0].Main_Caution;
+            public static Vector3 Center1 => Tables.ResData[0].Main_Center1;
+            public static Vector3Int Center2 => Tables.ResData[0].Main_Center2;
         }
 
         public static class Test

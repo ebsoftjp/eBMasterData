@@ -8,6 +8,33 @@ namespace MasterData
     public abstract class MDClassBase
     {
         public string Id; // ID
+
+        protected int[] ToIntArray(string s) => s.Replace(" ", "").Split(",").Select(v => int.Parse(v)).ToArray();
+        protected float[] ToFloatArray(string s) => s.Replace(" ", "").Split(",").Select(v => float.Parse(v)).ToArray();
+
+        protected Vector2 ToVector2(string s)
+        {
+            var v = ToFloatArray(s);
+            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1));
+        }
+
+        protected Vector2Int ToVector2Int(string s)
+        {
+            var v = ToIntArray(s);
+            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1));
+        }
+
+        protected Vector3 ToVector3(string s)
+        {
+            var v = ToFloatArray(s);
+            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));
+        }
+
+        protected Vector3Int ToVector3Int(string s)
+        {
+            var v = ToIntArray(s);
+            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));
+        }
     }
 
     [System.Serializable]
@@ -29,13 +56,17 @@ namespace MasterData
     {
         public int Main_FrameRate; // Frame rate
         public string Main_Caution; // Caution message
+        public Vector3 Main_Center1; // Center position 1
+        public Vector3Int Main_Center2; // Center position 2
         public StrEnum Test_EnumTest; // Enum test value
 
         public MDClassResData(params string[] lines)
         {
             Main_FrameRate = int.Parse(lines[0]);
             Main_Caution = lines[1];
-            Test_EnumTest = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[2]);
+            Main_Center1 = ToVector3(lines[2]);
+            Main_Center2 = ToVector3Int(lines[3]);
+            Test_EnumTest = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[4]);
         }
     }
 
