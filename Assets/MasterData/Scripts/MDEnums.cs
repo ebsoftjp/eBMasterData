@@ -3,9 +3,9 @@ namespace MasterData
 {
     public enum StrEnum
     {
-        Abc,
-        Def,
-        Ghi,
-        Jkl,
+        Abc = 1,
+        Def = 2,
+        Ghi = 3,
+        Jkl = 4,
     }
 }

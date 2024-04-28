@@ -110,7 +110,7 @@ namespace EbMasterData.Editor
                 data4.Add(new()
                 {
                     name = enumName,
-                    values = enumValues.OrderBy(v => v).Distinct().ToArray(),
+                    values = enumValues.OrderBy(v => v).Distinct().Where(v => v != "").ToArray(),
                 });
             }
         }

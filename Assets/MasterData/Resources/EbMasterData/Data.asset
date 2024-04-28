@@ -28,14 +28,14 @@ MonoBehaviour:
     Main_Caution: This is caution message.
     Main_Center1: {x: 1, y: 2, z: 3}
     Main_Center2: {x: 1, y: 2, z: 3}
-    Test_EnumTest: 3
+    Test_EnumTest: 4
   StrData:
   - Id: 1
-    Name: 0
-  - Id: 2
     Name: 1
-  - Id: 3
+  - Id: 2
     Name: 2
+  - Id: 3
+    Name: 3
   SprData:
   - Id: 1
     Sub1Id: 11

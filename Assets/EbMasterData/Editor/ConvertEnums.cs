@@ -32,7 +32,10 @@ namespace EbMasterData.Editor
                     $"    {{",
                 });
 
-                res.AddRange(v.values.Select(v => $"        {v},"));
+                for (int j = 0; j < v.values.Length; j++)
+                {
+                    res.Add($"        {v.values[j]} = {j + 1},");
+                }
 
                 res.AddRange(new List<string>
                 {
