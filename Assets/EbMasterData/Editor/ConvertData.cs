@@ -27,8 +27,6 @@ namespace EbMasterData.Editor
                 $"{{",
                 $"    public class {masterClassName} : ScriptableObject",
                 $"    {{",
-                $"        public static {masterClassName} Tables;",
-                $"",
             };
 
             foreach (var v in data)

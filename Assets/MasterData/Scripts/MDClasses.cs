@@ -93,8 +93,8 @@ namespace MasterData
         public string Sub1Id; // Index of Sub1
         public string Sub2Id; // Index of Sub2
 
-        public MDClassSprSub1 Sub1 => MDData.Tables.SprSub1.FirstOrDefault(v => v.Id == Sub1Id);
-        public MDClassSprSub2[] Sub2 => MDData.Tables.SprSub2.Where(v => v.Id == Sub2Id).ToArray();
+        public MDClassSprSub1 Sub1 => MD.SprSub1.FirstOrDefault(v => v.Id == Sub1Id);
+        public MDClassSprSub2[] Sub2 => MD.SprSub2.Where(v => v.Id == Sub2Id).ToArray();
 
         public MDClassSprData(params string[] lines)
         {

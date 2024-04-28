@@ -6,8 +6,6 @@ namespace MasterData
 {
     public class MDData : ScriptableObject
     {
-        public static MDData Tables;
-
         public MDClassAdrData[] AdrData;
         public MDClassResData[] ResData;
         public MDClassStrData[] StrData;

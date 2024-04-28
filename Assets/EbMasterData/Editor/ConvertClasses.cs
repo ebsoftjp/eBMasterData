@@ -143,7 +143,7 @@ namespace EbMasterData.Editor
                         var pmkey = $"{org}{settings.ClassPrimaryKey}";
                         var key2 = v.type;
                         var key3 = v.type.Replace("[]", "");
-                        var table = $"{settings.DataFileName}.Tables.{key3}";
+                        var table = $"{settings.BaseFileName}.{key3}";
 
                         var add = new List<string>();
 
