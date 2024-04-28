@@ -165,18 +165,18 @@ namespace EbMasterData.Editor
                     }));
             }
 
-            // reference
-            var inhClasses = allClasses
-                .Where(v => v != data.name && v.StartsWith(data.name))
-                .ToArray();
+            //// reference
+            //var inhClasses = allClasses
+            //    .Where(v => v != data.name && v.StartsWith(data.name))
+            //    .ToArray();
 
-            if (inhClasses.Length > 0)
-            {
-                res.Add($"");
-                res.AddRange(inhClasses
-                    .Select(v => $"        public {tablePrefix}{v}[] {v.Replace(data.name, "")}Array"
-                        + $" => {settings.DataFileName}.Tables.{v}.Where(v => v.{primaryKey} == {primaryKey}).ToArray();"));
-            }
+            //if (inhClasses.Length > 0)
+            //{
+            //    res.Add($"");
+            //    res.AddRange(inhClasses
+            //        .Select(v => $"        public {tablePrefix}{v}[] {v.Replace(data.name, "")}Array"
+            //            + $" => {settings.BaseFileName}.{v}.Where(v => v.{primaryKey} == {primaryKey}).ToArray();"));
+            //}
 
             // vector
             var vecClasses = keys2
