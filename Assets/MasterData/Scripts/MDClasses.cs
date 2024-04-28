@@ -35,6 +35,11 @@ namespace MasterData
             var v = ToIntArray(s);
             return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));
         }
+
+        protected T ToEnum<T>(string s)
+        {
+            return string.IsNullOrEmpty(s) ? (T)System.Enum.ToObject(typeof(T), 0) : (T)System.Enum.Parse(typeof(T), s);
+        }
     }
 
     [System.Serializable]
@@ -66,7 +71,7 @@ namespace MasterData
             Main_Caution = lines[1];
             Main_Center1 = ToVector3(lines[2]);
             Main_Center2 = ToVector3Int(lines[3]);
-            Test_EnumTest = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[4]);
+            Test_EnumTest = ToEnum<StrEnum>(lines[4]);
         }
     }
 
@@ -78,7 +83,7 @@ namespace MasterData
         public MDClassStrData(params string[] lines)
         {
             Id = lines[0];
-            Name = (StrEnum)System.Enum.Parse(typeof(StrEnum), lines[1]);
+            Name = ToEnum<StrEnum>(lines[1]);
         }
     }
 

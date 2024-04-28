@@ -65,6 +65,11 @@ namespace EbMasterData.Editor
                 $"            var v = ToIntArray(s);",
                 $"            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));",
                 $"        }}",
+                $"",
+                $"        protected T ToEnum<T>(string s)",
+                $"        {{",
+                $"            return string.IsNullOrEmpty(s) ? (T)System.Enum.ToObject(typeof(T), 0) : (T)System.Enum.Parse(typeof(T), s);",
+                $"        }}",
                 $"    }}",
             };
 
@@ -218,7 +223,7 @@ namespace EbMasterData.Editor
                 // enum
                 if (settings.Enums.Contains(v.type))
                 {
-                    parse = $"({v.type})System.Enum.Parse(typeof({v.type}), lines[{n}])";
+                    parse = $"ToEnum<{v.type}>(lines[{n}])";
                 }
 
                 var key = v.key;
