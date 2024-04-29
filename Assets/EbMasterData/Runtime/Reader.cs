@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
-namespace EbMasterData
+namespace eBMasterData
 {
     public abstract class Reader
     {
@@ -128,7 +128,7 @@ namespace EbMasterData
                 ResponseAction = req =>
                 {
                     Debug.Log($"ResponseAction");
-                    // Content-Disposition: attachment; filename="EbMasterData-SprData.csv"; filename*=UTF-8''EbMasterData%20-%20SprData.csv
+                    // Content-Disposition: attachment; filename="eBMasterData-SprData.csv"; filename*=UTF-8''eBMasterData%20-%20SprData.csv
                     file = Regex.Match(req.GetResponseHeaders()?.GetValueOrDefault("Content-Disposition") ?? "",
                         @"([a-zA-Z0-9_]+)\.csv"";").Groups[1].Value;
                     Debug.Log($"\"{file}\"");

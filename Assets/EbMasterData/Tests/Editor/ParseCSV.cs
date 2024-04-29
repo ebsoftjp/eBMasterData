@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
-using EbMasterData;
+using eBMasterData;
 
 public class ParseCSV
 {

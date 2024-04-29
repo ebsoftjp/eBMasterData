@@ -1,4 +1,4 @@
-// Auto create by EbMasterData.ConvertData
+// Auto create by eBMasterData.ConvertData
 using System.Linq;
 using UnityEngine;
 

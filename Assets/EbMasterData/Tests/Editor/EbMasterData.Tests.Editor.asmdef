@@ -1,10 +1,10 @@
 {
-    "name": "EbMasterData.Tests",
+    "name": "eBMasterData.Tests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "EbMasterData"
+        "eBMasterData"
     ],
     "includePlatforms": [
         "Editor"

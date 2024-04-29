@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class ConvertBase
     {
@@ -18,7 +18,7 @@ namespace EbMasterData.Editor
             var mdBaseClass = $"{settings.NamespaceName}.{settings.ClassNamePrefix}{settings.ClassNameBase}";
             var res = new List<string>
             {
-                $"// Auto create by EbMasterData.ConvertBase",
+                $"// Auto create by eBMasterData.ConvertBase",
                 $"using System.Collections.Generic;",
                 $"using System.Linq;",
                 $"using UnityEngine;",

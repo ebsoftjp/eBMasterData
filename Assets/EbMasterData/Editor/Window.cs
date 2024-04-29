@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     class Window : EditorWindow
     {
         [MenuItem(Paths.OpenWindowPath)]
         public static void Open()
         {
-            GetWindowWithRect<Window>(new Rect(0, 0, 320, 240), true, "EbMasterData - Settings", true);
+            GetWindowWithRect<Window>(new Rect(0, 0, 320, 240), true, "eB Master Data - Settings", true);
         }
 
         private void OnGUI()
@@ -17,7 +17,7 @@ namespace EbMasterData.Editor
             EditorGUILayout.BeginVertical();
             EditorGUILayout.EndVertical();
 
-            EditorGUILayout.LabelField("EbMasterData control panel");
+            EditorGUILayout.LabelField("eB Master Data control panel");
             var rect = new Rect(40.0f, 60.0f, 240.0f, 20.0f);
             var cv = new Convert();
 

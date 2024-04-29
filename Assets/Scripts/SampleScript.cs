@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using EbMasterData;
+using eBMasterData;
 
 public class SampleScript : MonoBehaviour
 {
@@ -14,7 +14,7 @@ public class SampleScript : MonoBehaviour
 
     void Start()
     {
-        data = Resources.Load<MasterData.MDData>("EbMasterData/Data");
+        data = Resources.Load<MasterData.MDData>("eBMasterData/Data");
         button = Document.rootVisualElement.Q<Button>();
         label = Document.rootVisualElement.Q<Label>();
         button.text = "Start";

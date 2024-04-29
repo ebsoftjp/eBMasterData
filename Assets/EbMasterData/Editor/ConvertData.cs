@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class ConvertData
     {
@@ -19,7 +19,7 @@ namespace EbMasterData.Editor
         {
             var res = new List<string>
             {
-                $"// Auto create by EbMasterData.ConvertData",
+                $"// Auto create by eBMasterData.ConvertData",
                 $"using System.Linq;",
                 $"using UnityEngine;",
                 $"",

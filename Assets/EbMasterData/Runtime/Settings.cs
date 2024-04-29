@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace EbMasterData
+namespace eBMasterData
 {
     public class Settings : ScriptableObject
     {

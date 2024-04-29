@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EbMasterData
+namespace eBMasterData
 {
     [System.Serializable]
     public class Core

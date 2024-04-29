@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class ConvertClasses
     {
@@ -28,7 +28,7 @@ namespace EbMasterData.Editor
         {
             var res = new List<string>
             {
-                $"// Auto create by EbMasterData.ConvertClasses",
+                $"// Auto create by eBMasterData.ConvertClasses",
                 $"using System.Linq;",
                 $"using UnityEngine;",
                 $"",

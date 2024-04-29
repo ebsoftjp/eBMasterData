@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace EbMasterData
+namespace eBMasterData
 {
     public abstract class Downloader<T>
     {

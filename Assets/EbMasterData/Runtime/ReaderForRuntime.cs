@@ -8,7 +8,7 @@ using UnityEngine.AddressableAssets;
 using UnityEditor;
 //using Newtonsoft.Json;
 
-namespace EbMasterData
+namespace eBMasterData
 {
     public class ReaderForRuntime : Reader
     {

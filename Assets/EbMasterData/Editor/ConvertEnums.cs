@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class ConvertEnums
     {
@@ -16,7 +16,7 @@ namespace EbMasterData.Editor
         {
             var res = new List<string>
             {
-                $"// Auto create by EbMasterData.ConvertEnums",
+                $"// Auto create by eBMasterData.ConvertEnums",
                 $"namespace {settings.NamespaceName}",
                 $"{{",
             };

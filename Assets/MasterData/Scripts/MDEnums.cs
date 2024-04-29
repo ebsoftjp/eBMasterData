@@ -1,4 +1,4 @@
-// Auto create by EbMasterData.ConvertEnums
+// Auto create by eBMasterData.ConvertEnums
 namespace MasterData
 {
     public enum StrEnum

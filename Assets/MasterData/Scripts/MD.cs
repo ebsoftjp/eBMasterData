@@ -1,11 +1,11 @@
-// Auto create by EbMasterData.ConvertBase
+// Auto create by eBMasterData.ConvertBase
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public static class MD
 {
-    private const string resourcePath = "EbMasterData/Data";
+    private const string resourcePath = "eBMasterData/Data";
 
     public static MasterData.MDData _Tables;
     public static MasterData.MDData Tables { get { if (!_Tables) _Tables = Resources.Load<MasterData.MDData>(resourcePath); return _Tables; } }

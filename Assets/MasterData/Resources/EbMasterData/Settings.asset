@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   OutputPath: Assets/MasterData/Scripts/
+  BaseFileName: MD
   NamespaceName: MasterData
   ClassesFileName: MDClasses
   EnumsFilePath: MDEnums

@@ -1,5 +1,5 @@
 {
-    "name": "EbMasterData.Editor",
+    "name": "eBMasterData.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:cd47d5a1d345e4b57a209dad0caba53e"

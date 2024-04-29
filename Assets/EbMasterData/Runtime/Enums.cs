@@ -1,4 +1,4 @@
-﻿namespace EbMasterData
+﻿namespace eBMasterData
 {
     public enum DsDataType
     {

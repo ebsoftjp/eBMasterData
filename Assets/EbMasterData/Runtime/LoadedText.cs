@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace EbMasterData
+namespace eBMasterData
 {
     public class LoadedText
     {

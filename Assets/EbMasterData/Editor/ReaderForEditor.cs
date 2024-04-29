@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEditor;
 //using Newtonsoft.Json;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class ReaderForEditor : Reader
     {

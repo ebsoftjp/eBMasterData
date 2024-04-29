@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
 
-namespace EbMasterData.Editor
+namespace eBMasterData.Editor
 {
     public class Convert
     {

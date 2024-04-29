@@ -1,4 +1,4 @@
-// Auto create by EbMasterData.ConvertClasses
+// Auto create by eBMasterData.ConvertClasses
 using System.Linq;
 using UnityEngine;
 
@@ -9,8 +9,8 @@ namespace MasterData
     {
         public string Id; // ID
 
-        protected int[] ToIntArray(string s) => s.Replace(" ", "").Split(",").Select(v => int.Parse(v)).ToArray();
-        protected float[] ToFloatArray(string s) => s.Replace(" ", "").Split(",").Select(v => float.Parse(v)).ToArray();
+        protected int[] ToIntArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => int.Parse(v)).ToArray();
+        protected float[] ToFloatArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => float.Parse(v)).ToArray();
 
         protected Vector2 ToVector2(string s)
         {
