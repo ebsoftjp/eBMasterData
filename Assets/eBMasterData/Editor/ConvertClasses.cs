@@ -212,6 +212,7 @@ namespace eBMasterData.Editor
                 var parse = v.type switch
                 {
                     "int" => $"int.Parse(lines[{n}])",
+                    "float" => $"float.Parse(lines[{n}])",
                     "bool" => $"bool.Parse(lines[{n}])",
                     "Vector2" => $"ToVector2(lines[{n}])",
                     "Vector2Int" => $"ToVector2Int(lines[{n}])",
