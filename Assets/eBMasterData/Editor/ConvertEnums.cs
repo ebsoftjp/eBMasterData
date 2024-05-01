@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 
 namespace eBMasterData.Editor
 {
@@ -53,3 +53,4 @@ namespace eBMasterData.Editor
         }
     }
 }
+#endif

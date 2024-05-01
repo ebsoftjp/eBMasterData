@@ -1,7 +1,7 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
@@ -161,3 +161,4 @@ namespace eBMasterData.Editor
         }
     }
 }
+#endif

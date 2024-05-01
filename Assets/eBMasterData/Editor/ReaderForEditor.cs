@@ -1,11 +1,9 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Text.RegularExpressions;
-using UnityEngine;
 using UnityEditor;
-//using Newtonsoft.Json;
 
 namespace eBMasterData.Editor
 {
@@ -130,3 +128,4 @@ namespace eBMasterData.Editor
         }
     }
 }
+#endif

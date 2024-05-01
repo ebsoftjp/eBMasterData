@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using UnityEditor;
 
 namespace eBMasterData.Editor
 {
@@ -10,8 +10,6 @@ namespace eBMasterData.Editor
         private string tablePrefix => settings.ClassNamePrefix;
         private string classBase0 => settings.ClassNameBase;
         private string primaryKey => settings.ClassPrimaryKey;
-        private string idSuffix => primaryKey;
-        //private string configKey = "Config";
         private static readonly string[] vecArray = new string[]
         {
             "VecData",
@@ -165,19 +163,6 @@ namespace eBMasterData.Editor
                     }));
             }
 
-            //// reference
-            //var inhClasses = allClasses
-            //    .Where(v => v != data.name && v.StartsWith(data.name))
-            //    .ToArray();
-
-            //if (inhClasses.Length > 0)
-            //{
-            //    res.Add($"");
-            //    res.AddRange(inhClasses
-            //        .Select(v => $"        public {tablePrefix}{v}[] {v.Replace(data.name, "")}Array"
-            //            + $" => {settings.BaseFileName}.{v}.Where(v => v.{primaryKey} == {primaryKey}).ToArray();"));
-            //}
-
             // vector
             var vecClasses = keys2
                 .Where(v => Regex.IsMatch(v.key, @"X$"))
@@ -244,26 +229,6 @@ namespace eBMasterData.Editor
 
             return res;
         }
-
-        private List<string> CreateClassFileEach2(string key1, string[] keys2)
-        {
-            // param
-            var res = new List<string>()
-            {
-                $"",
-                $"    [System.Serializable]",
-                $"    public class {tablePrefix}{key1}",
-                $"    {{",
-            };
-
-            res.AddRange(keys2.Select(v => $"// {v}"));
-
-            res.AddRange(new List<string>
-            {
-                $"}}",
-            });
-
-            return res;
-        }
     }
 }
+#endif

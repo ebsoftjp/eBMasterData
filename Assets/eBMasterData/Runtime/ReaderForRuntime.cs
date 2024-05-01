@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEditor;
-//using Newtonsoft.Json;
 
 namespace eBMasterData
 {
