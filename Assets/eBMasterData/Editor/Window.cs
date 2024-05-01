@@ -36,13 +36,13 @@ namespace eBMasterData.Editor
             rect.y += addy;
             if (GUI.Button(rect, "Convert"))
             {
-                cv.ConvertDBClasses();
+                cv.WithSave(cv.ConvertDBClasses);
             }
 
             rect.y += addy;
             if (GUI.Button(rect, "Dump"))
             {
-                cv.DumpData();
+                cv.WithSave(cv.DumpData);
             }
 
             rect.y += addy;
