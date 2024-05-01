@@ -34,6 +34,7 @@ namespace eBMasterData
                     .Select(s => s.Length > 1 && s[0] == dqCode && s[^1] == dqCode ? s[1..^1] : s)
                     .Select(s => s.Replace($"{dqCode}{dqCode}", $"{dqCode}"))
                     .ToArray())
+                .Where(v => v.Length > 1 || (v.ElementAtOrDefault(0)?.Length ?? 0) > 0)
                 .ToArray();
 
             if (IsOutputLog)
