@@ -45,6 +45,13 @@ namespace eBMasterData
                         .Select(v => v.Replace($"{retCode}", "\\n"))))));
             }
 
+            // validate data count
+            var colCounts = res.Select(v => v.Length).Distinct();
+            if (colCounts.Count() > 1)
+            {
+                throw new System.Exception($"Columns count not same: {string.Join(", ", colCounts)}");
+            }
+
             // exchange row and columns
             if (format == 1 && res.Length > 0)
             {
