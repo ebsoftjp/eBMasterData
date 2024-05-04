@@ -9,8 +9,23 @@ namespace MasterData
     {
         public string Id; // ID
 
-        protected int[] ToIntArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => int.Parse(v)).ToArray();
-        protected float[] ToFloatArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => float.Parse(v)).ToArray();
+        protected int[] ToIntArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => ToType<int>(v)).ToArray();
+        protected bool[] ToBoolArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => ToType<bool>(v)).ToArray();
+        protected float[] ToFloatArray(string s) => s.Replace(" ", "").Split(",").Where(v => v != "").Select(v => ToType<float>(v)).ToArray();
+
+        protected T ToType<T>(string s)
+        {
+            try
+            {
+                var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(T));
+                return (T)converter?.ConvertFromString(s) ?? default;
+            }
+            catch
+            {
+                Debug.LogError($"{s}: not {typeof(T).Name}");
+                return default;
+            }
+        }
 
         protected Vector2 ToVector2(string s)
         {
@@ -51,7 +66,7 @@ namespace MasterData
         public MDClassAdrData(params string[] lines)
         {
             Id = lines[0];
-            Value = int.Parse(lines[1]);
+            Value = ToType<int>(lines[1]);
             OrderText = lines[2];
         }
     }
@@ -67,7 +82,7 @@ namespace MasterData
 
         public MDClassResData(params string[] lines)
         {
-            Main_FrameRate = int.Parse(lines[0]);
+            Main_FrameRate = ToType<int>(lines[0]);
             Main_Caution = lines[1];
             Main_Center1 = ToVector3(lines[2]);
             Main_Center2 = ToVector3Int(lines[3]);
@@ -124,7 +139,7 @@ namespace MasterData
         public MDClassSprSub2(params string[] lines)
         {
             Id = lines[0];
-            Value = int.Parse(lines[1]);
+            Value = ToType<int>(lines[1]);
         }
     }
 }
