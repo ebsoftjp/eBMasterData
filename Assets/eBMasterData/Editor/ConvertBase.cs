@@ -35,51 +35,55 @@ namespace eBMasterData.Editor
 
             foreach (var v in data)
             {
-                res.Add($"    public static {settings.NamespaceName}.{settings.ClassNamePrefix}{v.name}[] {v.name} => Tables.{v.name};");
-            }
-
-            res.AddRange(new List<string>
-            {
-                $"",
-                $"    public static class Config",
-                $"    {{",
-            });
-
-            var dic = new Dictionary<string, List<string>>();
-            foreach (var item in settings.Configs)
-            {
-                foreach (var v in data.FirstOrDefault(v => v.name == item)?.keys ?? new ReaderForEditor.KeysData3[0])
+                if (!settings.Configs.Contains(v.name))
                 {
-                    var key = v.key.Split("_")[0];
-                    if (!dic.ContainsKey(key)) dic[key] = new();
-                    var type = v.type;
-                    if (settings.Enums.Contains(type)) type = $"{settings.NamespaceName}.{type}";
-                    dic[key].Add($"            public static {type} {v.key.Replace($"{key}_", "")} => Tables.{item}[0].{v.key};");
+                    res.Add($"    public static {settings.NamespaceName}.{settings.ClassNamePrefix}{v.name}[] {v.name} => Tables.{v.name};");
+                }
+                else
+                {
+                    res.AddRange(new List<string>
+                    {
+                        $"    public static class {v.name}",
+                        $"    {{",
+                    });
+
+                    var dic = new Dictionary<string, List<string>>();
+                    foreach (var v3 in v.keys)
+                    {
+                        var key = v3.key.Split("_")[0];
+                        if (!dic.ContainsKey(key)) dic[key] = new();
+                        var type = v3.type;
+                        if (settings.Enums.Contains(type)) type = $"{settings.NamespaceName}.{type}";
+                        dic[key].Add($"            public static {type} {v3.key.Replace($"{key}_", "")} => Tables.{v.name}[0].{v3.key};");
+                    }
+
+                    for (int i = 0; i < dic.Keys.Count; i++)
+                    {
+                        if (i > 0) res.Add("");
+
+                        var key = dic.Keys.ElementAt(i);
+                        res.AddRange(new List<string>
+                        {
+                            $"        public static class {key}",
+                            $"        {{",
+                        });
+
+                        res.AddRange(dic[key]);
+
+                        res.AddRange(new List<string>
+                        {
+                            $"        }}",
+                        });
+                    }
+                    res.AddRange(new List<string>
+                    {
+                        $"    }}",
+                    });
                 }
             }
 
-            for (int i = 0; i < dic.Keys.Count; i++)
-            {
-                if (i > 0) res.Add("");
-
-                var key = dic.Keys.ElementAt(i);
-                res.AddRange(new List<string>
-                {
-                    $"        public static class {key}",
-                    $"        {{",
-                });
-
-                res.AddRange(dic[key]);
-
-                res.AddRange(new List<string>
-                {
-                    $"        }}",
-                });
-            }
-
             res.AddRange(new List<string>
             {
-                $"    }}",
                 $"",
                 $"    public static T At<T>(this IList<T> self, string key) where T : {mdBaseClass} => self.FirstOrDefault(v => v.Id == key);",
                 $"    public static T[] ArrayAt<T>(this IList<T> self, string key) where T : {mdBaseClass} => self.Where(v => v.Id == key).ToArray();",

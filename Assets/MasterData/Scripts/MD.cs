@@ -11,13 +11,8 @@ public static class MD
     public static MasterData.MDData Tables { get { if (!_Tables) _Tables = Resources.Load<MasterData.MDData>(resourcePath); return _Tables; } }
 
     public static MasterData.MDClassAdrData[] AdrData => Tables.AdrData;
-    public static MasterData.MDClassResData[] ResData => Tables.ResData;
-    public static MasterData.MDClassStrData[] StrData => Tables.StrData;
-    public static MasterData.MDClassSprData[] SprData => Tables.SprData;
-    public static MasterData.MDClassSprSub1[] SprSub1 => Tables.SprSub1;
-    public static MasterData.MDClassSprSub2[] SprSub2 => Tables.SprSub2;
 
-    public static class Config
+    public static class ResData
     {
         public static class Main
         {
@@ -32,6 +27,10 @@ public static class MD
             public static MasterData.StrEnum EnumTest => Tables.ResData[0].Test_EnumTest;
         }
     }
+    public static MasterData.MDClassStrData[] StrData => Tables.StrData;
+    public static MasterData.MDClassSprData[] SprData => Tables.SprData;
+    public static MasterData.MDClassSprSub1[] SprSub1 => Tables.SprSub1;
+    public static MasterData.MDClassSprSub2[] SprSub2 => Tables.SprSub2;
 
     public static T At<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.FirstOrDefault(v => v.Id == key);
     public static T[] ArrayAt<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.Where(v => v.Id == key).ToArray();
