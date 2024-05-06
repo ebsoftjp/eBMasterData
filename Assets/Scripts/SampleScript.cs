@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
-using eBMasterData;
 
 public class SampleScript : MonoBehaviour
 {
@@ -26,14 +25,12 @@ public class SampleScript : MonoBehaviour
     private async void Download()
     {
         button.SetEnabled(false);
-        label.text = "Download";
 
-        var settings = Resources.Load<Settings>(Paths.SettingsPath);
-        var reader = new ReaderForRuntime((_, _, text) => { label.text = text; return false; });
-        await reader.CreateFileList();
-        await reader.ReadText();
-        reader.ParseData();
-        data.Convert2(reader.ParsedTables, reader.ParsedValues);
+        await eBMasterData.Utility.Reload(MD.Tables, (_, _, text) =>
+        {
+            label.text = text;
+            return false;
+        });
         label.text = "Done";
     }
 }

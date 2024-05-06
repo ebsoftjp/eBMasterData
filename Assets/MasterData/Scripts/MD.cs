@@ -11,7 +11,6 @@ public static class MD
     public static MasterData.MDData Tables { get { if (!_Tables) _Tables = Resources.Load<MasterData.MDData>(resourcePath); return _Tables; } }
 
     public static MasterData.MDClassAdrData[] AdrData => Tables.AdrData;
-
     public static class ResData
     {
         public static class Main
