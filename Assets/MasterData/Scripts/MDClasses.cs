@@ -51,6 +51,12 @@ namespace MasterData
             return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));
         }
 
+        protected Color ToColor(string s)
+        {
+            var b = ColorUtility.TryParseHtmlString(s, out var v);
+            return b ? v : Color.white;
+        }
+
         protected T ToEnum<T>(string s)
         {
             return string.IsNullOrEmpty(s) ? (T)System.Enum.ToObject(typeof(T), 0) : (T)System.Enum.Parse(typeof(T), s);
@@ -79,6 +85,7 @@ namespace MasterData
         public Vector3 Main_Center1; // Center position 1
         public Vector3Int Main_Center2; // Center position 2
         public StrEnum Test_EnumTest; // Enum test value
+        public Color Test_ColorTest; // Test color
 
         public MDClassResData(params string[] lines)
         {
@@ -87,6 +94,7 @@ namespace MasterData
             Main_Center1 = ToVector3(lines[2]);
             Main_Center2 = ToVector3Int(lines[3]);
             Test_EnumTest = ToEnum<StrEnum>(lines[4]);
+            Test_ColorTest = ToColor(lines[5]);
         }
     }
 

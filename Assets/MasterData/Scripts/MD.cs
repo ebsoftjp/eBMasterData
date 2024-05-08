@@ -24,6 +24,7 @@ public static class MD
         public static class Test
         {
             public static MasterData.StrEnum EnumTest => Tables.ResData[0].Test_EnumTest;
+            public static Color ColorTest => Tables.ResData[0].Test_ColorTest;
         }
     }
     public static MasterData.MDClassStrData[] StrData => Tables.StrData;

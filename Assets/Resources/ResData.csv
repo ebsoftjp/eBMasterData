@@ -3,3 +3,4 @@ Main,Caution,string,Caution message,This is caution message.
 Main,Center1,Vector3,Center position 1,"1,2,3"
 Main,Center2,Vector3Int,Center position 2,"1,2,3"
 Test,EnumTest,StrEnum,Enum test value,Jkl
+Test,ColorTest,Color,Test color,#FFFF007F

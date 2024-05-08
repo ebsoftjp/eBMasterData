@@ -79,6 +79,12 @@ namespace eBMasterData.Editor
                 $"            return new(v.ElementAtOrDefault(0), v.ElementAtOrDefault(1), v.ElementAtOrDefault(2));",
                 $"        }}",
                 $"",
+                $"        protected Color ToColor(string s)",
+                $"        {{",
+                $"            var b = ColorUtility.TryParseHtmlString(s, out var v);",
+                $"            return b ? v : Color.white;",
+                $"        }}",
+                $"",
                 $"        protected T ToEnum<T>(string s)",
                 $"        {{",
                 $"            return string.IsNullOrEmpty(s) ? (T)System.Enum.ToObject(typeof(T), 0) : (T)System.Enum.Parse(typeof(T), s);",
@@ -218,6 +224,7 @@ namespace eBMasterData.Editor
                     "Vector2Int" => $"ToVector2Int(lines[{n}])",
                     "Vector3" => $"ToVector3(lines[{n}])",
                     "Vector3Int" => $"ToVector3Int(lines[{n}])",
+                    "Color" => $"ToColor(lines[{n}])",
                     _ => $"lines[{n}]",
                 };
 

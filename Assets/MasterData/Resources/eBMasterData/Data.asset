@@ -29,6 +29,7 @@ MonoBehaviour:
     Main_Center1: {x: 1, y: 2, z: 3}
     Main_Center2: {x: 1, y: 2, z: 3}
     Test_EnumTest: 4
+    Test_ColorTest: {r: 1, g: 1, b: 0, a: 0.49803922}
   StrData:
   - Id: 1
     Name: 1
