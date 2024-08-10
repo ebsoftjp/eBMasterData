@@ -64,7 +64,13 @@ namespace MasterData
     }
 
     [System.Serializable]
-    public class MDClassAdrData : MDClassBase
+    public abstract class MDClassRate : MDClassBase
+    {
+        public int Rate; // Rate
+    }
+
+    [System.Serializable]
+    public class MDClassAdrData : MDClassRate
     {
         public int Value; // Value of data
         public string OrderText; // Display order text
@@ -74,6 +80,7 @@ namespace MasterData
             Id = lines[0];
             Value = ToType<int>(lines[1]);
             OrderText = lines[2];
+            Rate = ToType<int>(lines[3]);
         }
     }
 

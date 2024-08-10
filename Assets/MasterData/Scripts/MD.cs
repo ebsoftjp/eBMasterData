@@ -34,4 +34,24 @@ public static class MD
 
     public static T At<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.FirstOrDefault(v => v.Id == key);
     public static T[] ArrayAt<T>(this IList<T> self, string key) where T : MasterData.MDClassBase => self.Where(v => v.Id == key).ToArray();
+
+    public static T RandomRateAt<T>(this IList<T> self, System.Random rand) where T : MasterData.MDClassRate
+    {
+        var total = self.Sum(v => v.Rate);
+        if (total == 0) return null;
+        var n = rand.Next() % total;
+        return self
+            .FirstOrDefault(v =>
+            {
+                if (n < v.Rate)
+                {
+                    return true;
+                }
+                else
+                {
+                    n -= v.Rate;
+                    return false;
+                }
+            });
+    }
 }

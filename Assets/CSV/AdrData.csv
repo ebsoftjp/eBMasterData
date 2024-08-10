@@ -1,6 +1,8 @@
-Id,Value,OrderText
-string,int,string
-Id of data,Value of data,Display order text
-One,10,1st
-Two,20,2nd
-Three,30,3rd
+Id,Value,OrderText,Rate
+string,int,string,int
+Id of data,Value of data,Display order text,Rate
+One,10,1st,1
+Two,20,2nd,1
+Three,30,3rd-1,1
+Three,40,3rd-2,2
+Three,50,3rd-3,3

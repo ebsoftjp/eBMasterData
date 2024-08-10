@@ -14,14 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AdrData:
   - Id: One
+    Rate: 1
     Value: 10
     OrderText: 1st
   - Id: Two
+    Rate: 1
     Value: 20
     OrderText: 2nd
   - Id: Three
+    Rate: 1
     Value: 30
-    OrderText: 3rd
+    OrderText: 3rd-1
+  - Id: Three
+    Rate: 2
+    Value: 40
+    OrderText: 3rd-2
+  - Id: Three
+    Rate: 3
+    Value: 50
+    OrderText: 3rd-3
   ResData:
   - Id: 
     Main_FrameRate: 60

@@ -20,6 +20,12 @@ public class SampleScript : MonoBehaviour
         label.text = $"Ready: {data.AdrData.Length}";
 
         button.clicked += Download;
+
+        // random debug
+        var rand = new System.Random(2);
+        var list = Enumerable.Repeat(0, 100000).Select(_ => MD.AdrData.ArrayAt("Three").RandomRateAt(rand).OrderText).ToArray();
+        Debug.Log(string.Join("\n", MD.AdrData.Select(v => $"[{v.OrderText}] {list.Count(l => l == v.OrderText)}")));
+        //Debug.Log(string.Join("\n", list));
     }
 
     private async void Download()

@@ -15,6 +15,9 @@ namespace eBMasterData.Editor
             "VecData",
         };
 
+        private string classBase1 => "Rate";
+        private string rateKey => "Rate";
+
         private readonly Settings settings;
 
         public ConvertClasses(Settings settings)
@@ -90,6 +93,12 @@ namespace eBMasterData.Editor
                 $"            return string.IsNullOrEmpty(s) ? (T)System.Enum.ToObject(typeof(T), 0) : (T)System.Enum.Parse(typeof(T), s);",
                 $"        }}",
                 $"    }}",
+                $"",
+                $"    [System.Serializable]",
+                $"    public abstract class {tablePrefix}{classBase1} : {tablePrefix}{classBase0}",
+                $"    {{",
+                $"        public int {rateKey}; // Rate",
+                $"    }}",
             };
 
             // create reference list
@@ -117,6 +126,12 @@ namespace eBMasterData.Editor
 
             var useBase = classBase0;
 
+            // rate class
+            if (keys2.FirstOrDefault(v => v.key == rateKey) != null)
+            {
+                useBase = classBase1;
+            }
+
             // begin
             var res = new List<string>()
             {
@@ -138,6 +153,7 @@ namespace eBMasterData.Editor
             {
                 var type = v.type;
                 var key = v.key;
+                if (key == rateKey) continue;
                 var comment = v.comment.Replace("\n", "");
                 if (comment == "") comment = "(no comment)";
 
